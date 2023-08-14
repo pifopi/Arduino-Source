@@ -28,7 +28,7 @@ void set_time_to_12am_from_home(const ProgramInfo& info, ConsoleHandle& console,
 void day_skip_from_overworld(ConsoleHandle& console, BotBaseContext& context);
 
 //  From overworld, open map. Will change map view from rotated to fixed if not already fixed.
-void open_map_from_overworld(const ProgramInfo& info, ConsoleHandle& console, BotBaseContext& context);
+void open_map_from_overworld(const ProgramInfo& info, ConsoleHandle& console, BotBaseContext& context, bool clear_tutorial = false);
 
 //  From map, press A to fly to a travel spot.
 void fly_to_overworld_from_map(const ProgramInfo& info, ConsoleHandle& console, BotBaseContext& context);

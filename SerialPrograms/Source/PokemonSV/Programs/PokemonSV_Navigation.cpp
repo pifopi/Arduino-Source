@@ -61,7 +61,9 @@ void day_skip_from_overworld(ConsoleHandle& console, BotBaseContext& context){
     resume_game_from_home(console, context);
 }
 
-void open_map_from_overworld(const ProgramInfo& info, ConsoleHandle& console, BotBaseContext& context){
+void open_map_from_overworld(const ProgramInfo& info, ConsoleHandle& console, BotBaseContext& context,
+    bool clear_tutorial
+){
     {
         OverworldWatcher overworld(COLOR_CYAN);
         context.wait_for_all_requests();
