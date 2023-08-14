@@ -41,6 +41,8 @@
 
 #include "Programs/ShinyHunting/PokemonSV_ShinyHunt-AreaZeroPlatform.h"
 
+#include "Programs/AutoStory/PokemonSV_AutoStory.h"
+
 #include "Programs/Glitches/PokemonSV_RideCloner-1.0.1.h"
 #include "Programs/Glitches/PokemonSV_CloneItems-1.0.1.h"
 
