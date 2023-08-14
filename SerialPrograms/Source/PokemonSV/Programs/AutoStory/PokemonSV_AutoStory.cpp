@@ -808,13 +808,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_press_button(context, BUTTON_A, 20, 105);
             pbf_press_button(context, BUTTON_A, 20, 105);
             run_battle(env, context, true);
-            if (!dialog_clearer(env, context, false, false, false, 10)){
-                context.wait_for_all_requests();
-                env.console.log("Did not finish catching tutorial, resetting from checkpoint...", COLOR_RED);
-                env.console.overlay().add_log("Failed catching tutorial, reset", COLOR_RED);
-                reset_game(env, context, "Did not finish catching tutorial, resetting from checkpoint...");
-                continue;
-            }
+            dialog_clearer(env, context, false, false, false, 10);
             context.wait_for_all_requests();
             env.console.log("Finished catch tutorial");
             env.console.overlay().add_log("Finished catch tutorial", COLOR_WHITE);
