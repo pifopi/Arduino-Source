@@ -840,7 +840,15 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.update_stats();
                 continue;
             }
-            dialog_clearer(env, context);
+            if (!dialog_clearer(env, context, false, true, false)){
+                context.wait_for_all_requests();
+                env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
+                env.console.overlay().add_log("Did not reach cliff, reset", COLOR_RED);
+                reset_game(env, context, "Did not reach cliff, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
+                continue;
+            }
             context.wait_for_all_requests();
             env.console.log("Mystery cry");
             env.console.overlay().add_log("Mystery cry", COLOR_WHITE);
