@@ -53,12 +53,15 @@ struct AutoStory_Descriptor::Stats : public StatsTracker{
     Stats()
         : m_checkpoint(m_stats["Checkpoint"])
         , m_segment(m_stats["Segment"])
+        , m_reset(m_stats["Reset"])
     {
         m_display_order.emplace_back("Checkpoint");
         m_display_order.emplace_back("Segment");
+        m_display_order.emplace_back("Reset");
     }
     std::atomic<uint64_t>& m_checkpoint;
     std::atomic<uint64_t>& m_segment;
+    std::atomic<uint64_t>& m_reset;
 };
 std::unique_ptr<StatsTracker> AutoStory_Descriptor::make_stats() const{
     return std::unique_ptr<StatsTracker>(new Stats());
@@ -612,6 +615,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not enter Nemona's house, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Failed to enter house, reset", COLOR_RED);
                 reset_game(env, context, "Did not enter Nemona's house, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             context.wait_for_all_requests();
@@ -643,6 +648,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Failed to pick starter, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Failed to select a starter, reset", COLOR_RED);
                 reset_game(env, context, "Failed to pick starter, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             pbf_press_button(context, BUTTON_A, 20, 105);
@@ -652,6 +659,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Stuck trying to give a nickname, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Stuck on nickname page, reset", COLOR_RED);
                 reset_game(env, context, "Stuck trying to give a nickname, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             pbf_press_dpad(context, DPAD_DOWN,  20, 105);
@@ -661,6 +670,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Stuck trying to give a nickname, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Stuck on nickname page, reset", COLOR_RED);
                 reset_game(env, context, "Stuck trying to give a nickname, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             break;
@@ -715,6 +726,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not talk to Nemona at beach, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Can't find Nemona, reset", COLOR_RED);
                 reset_game(env, context, "Did not talk to Nemona at beach, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             context.wait_for_all_requests();
@@ -759,6 +772,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not find Mom, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Can't find mom, reset", COLOR_RED);
                 reset_game(env, context, "Did not find Mom, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             context.wait_for_all_requests();
@@ -782,6 +797,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not find Nemona, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Can't find Nemona, reset", COLOR_RED);
                 reset_game(env, context, "Did not find Nemona, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             context.wait_for_all_requests();
@@ -819,6 +836,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach cliff, reset", COLOR_RED);
                 reset_game(env, context, "Did not reach cliff, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             dialog_clearer(env, context);
@@ -879,6 +898,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not enter cave, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not enter cave, reset", COLOR_RED);
                 reset_game(env, context, "Did not enter cave, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             dialog_clearer(env, context, false, false, false, 10);
@@ -924,6 +945,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not reach Houndoom, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Houndoom, reset", COLOR_RED);
                 reset_game(env, context, "Did not reach Houndoom, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             mash_button_till_overworld(env, context, BUTTON_A);
@@ -956,6 +979,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not talk to Arven at lab, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Can't find Arven, reset", COLOR_RED);
                 reset_game(env, context, "Did not talk to Arven at lab, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             context.wait_for_all_requests();
@@ -988,6 +1013,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not talk to Nemona on the lighthouse, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Can't find Nemona, reset", COLOR_RED);
                 reset_game(env, context, "Did not talk to Nemona on the lighthouse, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             mash_button_till_overworld(env, context, BUTTON_A);
@@ -1025,6 +1052,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
                 env.console.log("Did not reach Los Platos, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Los Platos, reset", COLOR_RED);
                 reset_game(env, context, "Did not reach Los Platos, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
                 continue;
             }
             dialog_clearer(env, context, false, false, false, 10);
