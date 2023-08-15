@@ -346,8 +346,8 @@ bool move_toward_destination(
 
         int ret = run_until(
             env.console, context,
-            [x, y, seconds_realign, &env](BotBaseContext& context){
-                for (int i = 0; i < 20; i++){
+            [x, y, seconds_realign, &env, seconds_run](BotBaseContext& context){
+                for (int i = 0; i < seconds_run / seconds_realign; i++){
                     ssf_press_left_joystick(context, x, y, 0, seconds_realign * TICKS_PER_SECOND);
                     pbf_wait(context, seconds_realign * TICKS_PER_SECOND);
                     realign_player(env, context);
@@ -831,7 +831,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
 
         while (true){
             set_map_marker(env, context, 240, 60, 80);
-            if (!move_toward_destination(env, context, 116, 0, 60, false, false, 24)){
+            if (!move_toward_destination(env, context, 116, 0, 72, false, false, 24)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach cliff, reset", COLOR_RED);
@@ -1072,7 +1072,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_move_left_joystick(context, 128, 0, 1 * TICKS_PER_SECOND, 2 * TICKS_PER_SECOND);
 
             set_map_marker(env, context, 100, 60, 200);
-            if (!move_toward_destination(env, context, 128, 0, 60, false, true, 15)){
+            if (!move_toward_destination(env, context, 128, 0, 75, false, true, 15)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach Los Platos, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Los Platos, reset", COLOR_RED);
