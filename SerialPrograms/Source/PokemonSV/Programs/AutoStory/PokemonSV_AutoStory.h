@@ -40,8 +40,6 @@ private:
     virtual void value_changed() override;
 
 private:
-    BooleanCheckBoxOption SAVE_AT_CHECKPOINT;
-
     enum class StartPoint{
         INTRO_CUTSCENE,
         LEAVE_HOUSE,

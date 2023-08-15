@@ -72,12 +72,7 @@ AutoStory::~AutoStory(){
 }
 
 AutoStory::AutoStory()
-    : SAVE_AT_CHECKPOINT(
-          "<b>Save at Checkpoint:</b><br>When reaching segment checkpoints, save the game so it's possible to recover from unexpected errors.",
-          LockWhileRunning::LOCKED,
-          true
-    )
-    , STARTPOINT(
+    : STARTPOINT(
         "<b>Start Point:</b><br>Program will start with this segment.",
         {
             {StartPoint::INTRO_CUTSCENE,        "00_gameintro",         "00: Intro Cutscene"},
@@ -125,7 +120,6 @@ AutoStory::AutoStory()
         &NOTIFICATION_ERROR_FATAL,
     })
 {
-    PA_ADD_OPTION(SAVE_AT_CHECKPOINT);
     PA_ADD_OPTION(STARTPOINT);
     PA_ADD_OPTION(ENDPOINT);
     PA_ADD_OPTION(STARTERCHOICE);
@@ -482,7 +476,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         env.console.log("Start Segment 00: Intro Cutscene", COLOR_ORANGE);
         env.console.overlay().add_log("Start Segment 00: Intro Cutscene", COLOR_ORANGE);
 
-        //TODO: Automatic haracter settings
+        //TODO: Automatic character settings
 
         // Mash A through intro cutscene
         // TODO: Stand up icon detection
@@ -500,38 +494,29 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         env.console.log("Start Segment 01: Leave House", COLOR_ORANGE);
         env.console.overlay().add_log("Start Segment 01: Leave House", COLOR_ORANGE);
 
-        while (true){
-            // Stand up from chair and move left
-            pbf_move_left_joystick(context, 128, 255, 3 * TICKS_PER_SECOND, 5 * TICKS_PER_SECOND);
-            pbf_move_left_joystick(context,   0, 128, 6 * TICKS_PER_SECOND, 100);
+        // Stand up from chair and move left
+        pbf_move_left_joystick(context, 128, 255, 3 * TICKS_PER_SECOND, 5 * TICKS_PER_SECOND);
+        pbf_move_left_joystick(context,   0, 128, 6 * TICKS_PER_SECOND, 100);
 
-            // Open main menu and enter options menu
-            enter_menu_from_overworld(env, context, 0, MenuSide::RIGHT, false);
-            config_option(env, context, 1); // Text Speed: Fast
-            config_option(env, context, 1); // Skip Move Learning: On
-            config_option(env, context, 1); // Send to Boxes: Automatic
-            config_option(env, context, 1); // Give Nicknames: Off
-            config_option(env, context, 0); // Vertical Camera Controls: Regular
-            config_option(env, context, 0); // Horiztontal Camera Controls: Regular
-            config_option(env, context, 1); // Autosave: Off
-            config_option(env, context, 1); // Show Nicknames: Don't show
-            config_option(env, context, 1); // Skip Cutscenes: On
-            config_option(env, context, 0); // Background Music: 10
-            config_option(env, context, 0); // Sound Effects: 10
-            config_option(env, context, 0); // Pokemon Cries: 10
-            config_option(env, context, 1); // Controller Rumble: Off
-            config_option(env, context, 1); // Helpeing Functions: Off
-            pbf_press_button(context, BUTTON_A, 20, 2 * TICKS_PER_SECOND);
-            if (!dialog_clearer(env, context, false, false, false, 5)){
-                context.wait_for_all_requests();
-                env.console.log("Did not finish settings, resetting from checkpoint...", COLOR_RED);
-                env.console.overlay().add_log("Failed to set options, reset", COLOR_RED);
-                reset_game(env, context, "Did not finish settings, resetting from checkpoint...");
-                continue;
-            }
-            pbf_press_button(context, BUTTON_B, 20, 2 * TICKS_PER_SECOND);
-            break;
-        }
+        // Open main menu and enter options menu
+        enter_menu_from_overworld(env, context, 0, MenuSide::RIGHT, false);
+        config_option(env, context, 1); // Text Speed: Fast
+        config_option(env, context, 1); // Skip Move Learning: On
+        config_option(env, context, 1); // Send to Boxes: Automatic
+        config_option(env, context, 1); // Give Nicknames: Off
+        config_option(env, context, 0); // Vertical Camera Controls: Regular
+        config_option(env, context, 0); // Horiztontal Camera Controls: Regular
+        config_option(env, context, 1); // Autosave: Off
+        config_option(env, context, 1); // Show Nicknames: Don't show
+        config_option(env, context, 1); // Skip Cutscenes: On
+        config_option(env, context, 0); // Background Music: 10
+        config_option(env, context, 0); // Sound Effects: 10
+        config_option(env, context, 0); // Pokemon Cries: 10
+        config_option(env, context, 1); // Controller Rumble: Off
+        config_option(env, context, 1); // Helpeing Functions: Off
+        pbf_press_button(context, BUTTON_A, 20, 2 * TICKS_PER_SECOND);
+        dialog_clearer(env, context, false, false, false, 5);
+        pbf_press_button(context, BUTTON_B, 20, 2 * TICKS_PER_SECOND);
 
         context.wait_for_all_requests();
         env.console.log("Go downstairs, get stopped by Skwovet");
@@ -599,11 +584,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         open_map_from_overworld(env.program_info(), env.console, context, true);
         leave_phone_to_overworld(env.program_info(), env.console, context);
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 01: Leave House", COLOR_GREEN);
@@ -614,6 +598,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
         pbf_wait(context, 1 * TICKS_PER_SECOND);
+
     case StartPoint::PICK_STARTER:
         context.wait_for_all_requests();
         env.console.log("Start Segment 02: Pick Starter", COLOR_ORANGE);
@@ -622,7 +607,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         while (true){
             set_map_marker(env, context, 255, 180, 1 * TICKS_PER_SECOND);
             pbf_move_left_joystick(context, 128,   0, 7 * TICKS_PER_SECOND, 20);
-            if(!move_till_dialog(env, context, 100, 20, 60, false)){
+            if (!move_till_dialog(env, context, 100, 20, 60, false)){
                 context.wait_for_all_requests();
                 env.console.log("Did not enter Nemona's house, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Failed to enter house, reset", COLOR_RED);
@@ -699,11 +684,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         pbf_press_button(context, BUTTON_A, 20, 40);
         leave_box_system_to_overworld(env.program_info(), env.console, context);
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 02: Pick Starter", COLOR_GREEN);
@@ -713,6 +697,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::PICK_STARTER){
             break;
         }
+
     case StartPoint::NEMONA_FIRST_BATTLE:
         context.wait_for_all_requests();
         env.console.log("Start Segment 03: First Nemona Battle", COLOR_ORANGE);
@@ -746,11 +731,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         env.console.log("Finished battle.");
         env.console.overlay().add_log("Finished battle.", COLOR_WHITE);
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 03: First Nemona Battle", COLOR_GREEN);
@@ -760,6 +744,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::NEMONA_FIRST_BATTLE){
             break;
         }
+
     case StartPoint::CATCH_TUTORIAL:
         context.wait_for_all_requests();
         env.console.log("Start Segment 04: Catch Tutorial", COLOR_ORANGE);
@@ -783,11 +768,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         while (true){
             set_map_marker(env, context, 40, 82, 60);
@@ -819,11 +803,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("Move to cliff");
@@ -831,7 +814,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
 
         while (true){
             set_map_marker(env, context, 240, 100, 140);
-            if(!move_toward_destination(env, context, 116, 0, 180, false, false, 24)){
+            if (!move_toward_destination(env, context, 116, 0, 180, false, false, 24)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach cliff, reset", COLOR_RED);
@@ -845,11 +828,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 04: Catch Tutorial", COLOR_GREEN);
@@ -859,6 +841,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::CATCH_TUTORIAL){
             break;
         }
+
     case StartPoint::LEGENDARY_RESCUE:
         context.wait_for_all_requests();
         env.console.log("Start Segment 05: Rescue Legendary", COLOR_ORANGE);
@@ -936,7 +919,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_press_button(context, BUTTON_L, 20, 20);
             pbf_move_left_joystick(context, 128, 20, 8 * TICKS_PER_SECOND, 8 * TICKS_PER_SECOND);
             pbf_press_button(context, BUTTON_L, 20, 20);
-            if(!move_till_dialog(env, context, 128, 20, 40, false)){
+            if (!move_till_dialog(env, context, 128, 20, 40, false)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach Houndoom, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Houndoom, reset", COLOR_RED);
@@ -947,11 +930,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 05: Rescue Legendary", COLOR_GREEN);
@@ -961,6 +943,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::LEGENDARY_RESCUE){
             break;
         }
+
     case StartPoint::ARVEN_FIRST_BATTLE:
         context.wait_for_all_requests();
         env.console.log("Start Segment 06: First Arven Battle", COLOR_ORANGE);
@@ -985,11 +968,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         while (true){
             context.wait_for_all_requests();
@@ -1012,11 +994,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 06: First Arven Battle", COLOR_GREEN);
@@ -1026,6 +1007,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::ARVEN_FIRST_BATTLE){
             break;
         }
+
     case StartPoint::GOTO_LOS_PLATOS:
         context.wait_for_all_requests();
         env.console.log("Start Segment 07: Go to Los Platos", COLOR_ORANGE);
@@ -1038,14 +1020,14 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_move_left_joystick(context, 128, 0, 1 * TICKS_PER_SECOND, 2 * TICKS_PER_SECOND);
 
             set_map_marker(env, context, 100, 60, 200);
-            if(!move_toward_destination(env, context, 128, 0, 180, false, true, 15)){
+            if (!move_toward_destination(env, context, 128, 0, 180, false, true, 15)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach Los Platos, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Los Platos, reset", COLOR_RED);
                 reset_game(env, context, "Did not reach Los Platos, resetting from checkpoint...");
                 continue;
             }
-            dialog_clearer(env, context, false, true, false, 10);
+            dialog_clearer(env, context, false, false, false, 10);
             // TODO: Tutorial detection
             pbf_press_button(context, BUTTON_A, 20, 105);
             pbf_press_button(context, BUTTON_A, 20, 105);
@@ -1057,11 +1039,10 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             break;
         }
 
-        if (SAVE_AT_CHECKPOINT){
-            save_game_from_overworld(env.program_info(), env.console, context);
-            stats.m_checkpoint++;
-            env.update_stats();
-        }
+        save_game_from_overworld(env.program_info(), env.console, context);
+        stats.m_checkpoint++;
+        env.update_stats();
+        send_program_status_notification(env, NOTIFICATION_STATUS_UPDATE, "Saved at checkpoint.");
 
         context.wait_for_all_requests();
         env.console.log("End Segment 07: Go to Los Platos", COLOR_GREEN);
@@ -1071,6 +1052,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         if (ENDPOINT == EndPoint::GOTO_LOS_PLATOS){
             break;
         }
+
     }
     send_program_finished_notification(env, NOTIFICATION_PROGRAM_FINISH);
     GO_HOME_WHEN_DONE.run_end_of_program(context);
