@@ -868,11 +868,28 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
 
         while (true){
             set_map_marker(env, context, 230, 70, 100);
-            move_toward_destination(env, context, 128, 0, 180, false, false, 120);
+
+            if (!move_till_dialog(env, context, 128, 0, 30, false)){
+                context.wait_for_all_requests();
+                env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
+                env.console.overlay().add_log("Did not reach cliff, reset", COLOR_RED);
+                reset_game(env, context, "Did not reach cliff, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
+                continue;
+            }
             dialog_clearer(env, context, false, false, false, 10);
             // long animation
             dialog_clearer(env, context, false, false, false, 15);
-            move_till_dialog(env, context, 128, 0, 30);
+            if (!move_till_dialog(env, context, 128, 0, 30, false)){
+                context.wait_for_all_requests();
+                env.console.log("Did not reach legendary, resetting from checkpoint...", COLOR_RED);
+                env.console.overlay().add_log("Did not reach legendary, reset", COLOR_RED);
+                reset_game(env, context, "Did not reach legendaryf, resetting from checkpoint...");
+                stats.m_reset++;
+                env.update_stats();
+                continue;
+            }
             dialog_clearer(env, context, false, false, false, 10);
 
             // TODO: Bag menu navigation
@@ -893,7 +910,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_move_left_joystick(context, 150, 20, 1 * TICKS_PER_SECOND, 20);
             pbf_move_left_joystick(context, 128, 20, 8 * TICKS_PER_SECOND, 20);
             pbf_move_left_joystick(context, 150, 20, 2 * TICKS_PER_SECOND, 20);
-            if (!move_till_dialog(env, context, 128, 20, 10)){
+            if (!move_till_dialog(env, context, 128, 20, 10, false)){
                 context.wait_for_all_requests();
                 env.console.log("Did not enter cave, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not enter cave, reset", COLOR_RED);
