@@ -830,7 +830,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         env.console.overlay().add_log("Move to cliff", COLOR_WHITE);
 
         while (true){
-            set_map_marker(env, context, 240, 100, 140);
+            set_map_marker(env, context, 240, 60, 80);
             if (!move_toward_destination(env, context, 116, 0, 180, false, false, 24)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach cliff, resetting from checkpoint...", COLOR_RED);
