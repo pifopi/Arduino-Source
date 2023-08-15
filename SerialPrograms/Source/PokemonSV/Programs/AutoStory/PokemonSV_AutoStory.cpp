@@ -1064,7 +1064,7 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
             pbf_move_left_joystick(context, 128, 0, 1 * TICKS_PER_SECOND, 2 * TICKS_PER_SECOND);
 
             set_map_marker(env, context, 100, 60, 200);
-            if (!move_toward_destination(env, context, 128, 0, 180, false, true, 15)){
+            if (!move_toward_destination(env, context, 128, 0, 105, false, true, 15)){
                 context.wait_for_all_requests();
                 env.console.log("Did not reach Los Platos, resetting from checkpoint...", COLOR_RED);
                 env.console.overlay().add_log("Did not reach Los Platos, reset", COLOR_RED);
