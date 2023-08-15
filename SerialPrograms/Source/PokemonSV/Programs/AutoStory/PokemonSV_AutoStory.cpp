@@ -678,8 +678,8 @@ void AutoStory::program(SingleSwitchProgramEnvironment& env, BotBaseContext& con
         }
 
         context.wait_for_all_requests();
-        env.console.log("Clear fast heal tutorial");
-        env.console.overlay().add_log("Clear fast heal tutorial", COLOR_WHITE);
+        env.console.log("Clear auto heal tutorial");
+        env.console.overlay().add_log("Clear auto heal tutorial", COLOR_WHITE);
         enter_menu_from_overworld(env, context, 0, MenuSide::LEFT);
         pbf_press_button(context, BUTTON_A, 20, 8 * TICKS_PER_SECOND);
 
