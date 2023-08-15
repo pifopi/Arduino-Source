@@ -115,7 +115,7 @@ AutoStory::AutoStory()
         StarterChoice::FUECOCO
     )
     , GO_HOME_WHEN_DONE(true)
-    , NOTIFICATION_STATUS_UPDATE("Status Update", true, false, std::chrono::seconds(3600))
+    , NOTIFICATION_STATUS_UPDATE("Status Update", true, false, std::chrono::seconds(30))
     , NOTIFICATIONS({
         &NOTIFICATION_STATUS_UPDATE,
         &NOTIFICATION_PROGRAM_FINISH,
