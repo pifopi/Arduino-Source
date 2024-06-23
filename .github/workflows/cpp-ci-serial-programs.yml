@@ -26,6 +26,11 @@ jobs:
         path: Arduino-Source
     - uses: actions/checkout@v4
       with:
+        repository: 'PokemonAutomation/Arduino-Source-Internal'
+        path: Arduino-Source-Internal
+        token: ${{ secrets.PA_TOKEN }}
+    - uses: actions/checkout@v4
+      with:
         repository: 'PokemonAutomation/Packages'
         path: Packages
     - name: Install dependencies

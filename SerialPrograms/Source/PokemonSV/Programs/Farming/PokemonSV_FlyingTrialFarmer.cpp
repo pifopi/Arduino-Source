@@ -89,7 +89,7 @@ FlyingTrialFarmer::FlyingTrialFarmer()
         "<b>Inverted controls while flying:</b><br>"
         "Check this option if you have inverted controls on during flying.",
         LockMode::UNLOCK_WHILE_RUNNING,
-        false
+        true
     )
     , NOTIFICATION_STATUS_UPDATE("Status Update", true, false, std::chrono::seconds(3600))
     , NOTIFICATIONS({
