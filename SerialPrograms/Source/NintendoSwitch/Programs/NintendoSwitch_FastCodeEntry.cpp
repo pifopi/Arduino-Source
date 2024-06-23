@@ -32,7 +32,7 @@ FastCodeEntrySettingsOption::FastCodeEntrySettingsOption(LockMode lock_while_pro
             {KeyboardLayout::AZERTY, "azerty", "AZERTY"},
         },
         LockMode::LOCK_WHILE_RUNNING,
-        KeyboardLayout::QWERTY
+        KeyboardLayout::AZERTY
     )
     , SKIP_PLUS(
         "<b>Skip the Plus:</b><br>Don't press + to finalize the code. Useful for testing.",
