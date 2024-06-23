@@ -150,6 +150,8 @@
 
 //#include <opencv2/core.hpp>
 
+#include <QTcpSocket>
+#include <QDataStream>
 
 #include <iostream>
 using std::cout;
@@ -313,6 +315,26 @@ void TestProgramComputer::program(ProgramEnvironment& env, CancellableScope& sco
 //    BattleMenuDetector detector;
 //    cout << detector.detect(image) << endl;
 #endif
+
+    QTcpSocket socket;
+    socket.connectToHost("127.0.0.1", 18069);
+    socket.waitForConnected();
+
+    while (true) {
+        QDataStream outData(&socket);
+        outData << std::int32_t{ 42 };
+
+        socket.waitForReadyRead();
+        QDataStream  inData(socket.readAll());
+        std::int32_t inValue;
+        inData >> inValue;
+
+        std::stringstream ss;
+        ss << "Received : " << inValue;
+        env.logger().log(ss.str());
+
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+    }
 
 
 #if 0
