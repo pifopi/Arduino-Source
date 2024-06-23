@@ -35,6 +35,12 @@ add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 link_directories(${CMAKE_CURRENT_LIST_DIR})
 
 file(GLOB MAIN_SOURCES
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardFinder.cpp
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardFinder.h
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardJoiner.cpp
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardJoiner.h
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TextRaidJoiner.cpp
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TextRaidJoiner.h
     ../3rdParty/QtWavFile/WavFile.cpp
     ../3rdParty/QtWavFile/WavFile.h
     ../3rdParty/TesseractPA/TesseractPA.cpp

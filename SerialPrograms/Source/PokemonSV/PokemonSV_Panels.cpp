@@ -65,6 +65,9 @@
 #include "../../Internal/SerialPrograms/NintendoSwitch_TestPrograms.h"
 #endif
 
+#include "../../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardJoiner.h"
+#include "../../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TextRaidJoiner.h"
+
 namespace PokemonAutomation{
 namespace NintendoSwitch{
 namespace PokemonSV{
@@ -125,6 +128,8 @@ std::vector<PanelEntry> PanelListFactory::make_panels() const{
     ret.emplace_back("---- Fast Code Entry ----");
     ret.emplace_back(make_multi_switch_program<FastCodeEntry_Descriptor, FastCodeEntry>());
     ret.emplace_back(make_multi_switch_program<ClipboardFastCodeEntry_Descriptor, ClipboardFastCodeEntry>());
+    ret.emplace_back(make_multi_switch_program<TeraCardJoiner_Descriptor, TeraCardJoiner>());
+    ret.emplace_back(make_multi_switch_program<TextRaidJoiner_Descriptor, TextRaidJoiner>());
     ret.emplace_back(make_multi_switch_program<VideoFastCodeEntry_Descriptor, VideoFastCodeEntry>());
 
     ret.emplace_back("---- Stats Hunting ----");
