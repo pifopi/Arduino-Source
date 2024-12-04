@@ -71,6 +71,9 @@ macx{
 
 
 SOURCES += \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardFinder.cpp \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardJoiner.cpp \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_VideoFastCodeEntry.cpp \
     ../3rdParty/QtWavFile/WavFile.cpp \
     ../3rdParty/TesseractPA/TesseractPA.cpp \
     ../ClientSource/Connection/BotBase.cpp \
@@ -1053,6 +1056,9 @@ SOURCES += \
     Source/ZeldaTotK/ZeldaTotK_Settings.h
 
 HEADERS += \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardFinder.h \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_TeraCardJoiner.h \
+    ../../Arduino-Source-Internal/Repository/Internal/SerialPrograms/PokemonSV_VideoFastCodeEntry.h \
     ../3rdParty/QtWavFile/WavFile.h \
     ../3rdParty/TesseractPA/TesseractPA.h \
     ../3rdParty/dpp/appcommand.h \
