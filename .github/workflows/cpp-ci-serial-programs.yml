@@ -32,6 +32,7 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
+        sudo apt show libopencv-dev
         sudo apt install libopencv-dev
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
