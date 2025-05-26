@@ -2305,6 +2305,18 @@ set_target_properties(SerialPrograms PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(SerialPrograms PRIVATE Qt${QT_MAJOR}::Widgets Qt${QT_MAJOR}::SerialPort Qt${QT_MAJOR}::Multimedia Qt${QT_MAJOR}::MultimediaWidgets)
 target_link_libraries(SerialPrograms PRIVATE Threads::Threads)
 
+find_package(dpp CONFIG REQUIRED)
+target_link_libraries(SerialPrograms PRIVATE dpp::dpp)
+
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(SerialPrograms PRIVATE nlohmann_json::nlohmann_json)
+
+find_package(opencv CONFIG REQUIRED)
+target_link_libraries(SerialPrograms PRIVATE ${OpenCV_LIBS})
+
+find_package(sleepy-discord CONFIG REQUIRED)
+target_link_libraries(SerialPrograms PRIVATE sleepy-discord)
+
 #add defines
 target_compile_definitions(SerialPrograms PRIVATE NOMINMAX)
 
@@ -2316,14 +2328,6 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../Internal/SerialPrograms/Internal0.
     target_sources(SerialPrograms PRIVATE ../../Internal/SerialPrograms/Internal1.cpp)
 endif()
 
-#extract opencv_world4110d.dll from archive on Windows Debug builds
-if (MSVC)
-    file(ARCHIVE_EXTRACT
-      INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/opencv_world4110d.zip
-      DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/
-    )
-endif()
-
 #add include directory
 target_include_directories(SerialPrograms SYSTEM PRIVATE ../3rdParty/)
 target_include_directories(SerialPrograms PRIVATE ../ ../../Internal/ Source/)
@@ -2333,18 +2337,6 @@ target_link_directories(SerialPrograms PRIVATE ../3rdPartyBinaries/)
 
 
 if (MSVC)
-    add_library(OpenCV_lib IMPORTED UNKNOWN)
-    target_include_directories(SerialPrograms SYSTEM PRIVATE ../3rdParty/opencv-4.11.0/)
-    set_target_properties(OpenCV_lib PROPERTIES
-        IMPORTED_LOCATION_RELEASE   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/opencv_world4110.lib
-        IMPORTED_LOCATION_DEBUG     ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/opencv_world4110d.lib)
-    set_target_properties(OpenCV_lib PROPERTIES
-        MAP_IMPORTED_CONFIG_DEBUG           DEBUG
-        MAP_IMPORTED_CONFIG_RELEASE         RELEASE
-        MAP_IMPORTED_CONFIG_RELWITHDEBINFO  RELEASE
-        MAP_IMPORTED_CONFIG_MINSIZEREL      RELEASE
-    )
-
     add_library(ONNX_lib IMPORTED UNKNOWN)
     target_include_directories(SerialPrograms SYSTEM PRIVATE ../3rdParty/ONNX/)
     set_target_properties(ONNX_lib PROPERTIES
@@ -2368,25 +2360,11 @@ if (MSVC)
         MAP_IMPORTED_CONFIG_MINSIZEREL      RELEASE
     )
 
-    add_library(dpp_lib IMPORTED UNKNOWN)
-    set_target_properties(dpp_lib PROPERTIES
-        IMPORTED_LOCATION_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/dpp.lib
-        IMPORTED_LOCATION_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/dppd.lib)
-    set_target_properties(dpp_lib PROPERTIES
-        MAP_IMPORTED_CONFIG_DEBUG           DEBUG
-        MAP_IMPORTED_CONFIG_RELEASE         RELEASE
-        MAP_IMPORTED_CONFIG_RELWITHDEBINFO  RELEASE
-        MAP_IMPORTED_CONFIG_MINSIZEREL      RELEASE
-    )
-
     target_link_libraries(
         SerialPrograms PRIVATE
         tesseractPA.lib
-        OpenCV_lib
         ONNX_lib
         ONNX_Providers_lib
-        Sleepy.lib
-        dpp_lib
     )
     target_compile_definitions(
         SerialPrograms PRIVATE
@@ -2459,15 +2437,6 @@ else() # macOS and Linux
         target_link_libraries(SerialPrograms PRIVATE onnxruntime)
     endif()
 
-    # Find OpenCV
-    # set(OPENCV_DIR, "/usr/local/opt/opencv/lib/cmake/opencv4")
-    find_package(OpenCV REQUIRED HINTS "/usr/local/opt/opencv/lib/cmake/opencv4/")
-    # set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/opt/opencv/lib/pkgconfig")
-    # pkg_search_module(OPENCV REQUIRED opencv)
-    include_directories(${OpenCV_INCLUDE_DIRS})
-    link_directories(${OpenCV_LIBRARY_DIRS})
-    target_link_libraries(SerialPrograms PRIVATE ${OpenCV_LIBS})
-
     #we hope to use our own Tesseract build in future so we can rid that dependency
     #but right now to run on Linux and Mac we need to use external Tesseract library
     if (UNIX_LINK_TESSERACT)
@@ -2483,22 +2452,7 @@ else() # macOS and Linux
         target_link_libraries(SerialPrograms PRIVATE ${LEPTONICA_LINK_LIBRARIES})
     endif()
 
-    # enable dpp integration
-    if ((APPLE) AND (CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)"))
-        add_library(libdpp STATIC IMPORTED)
-        set_target_properties(libdpp PROPERTIES
-            IMPORTED_LOCATION ../3rdPartyBinaries/libdpp_macos_arm64.a
-            INTERFACE_COMPILE_DEFINITIONS "PA_DPP"
-            INTERFACE_LINK_LIBRARIES "-L/opt/homebrew/lib -lssl -lcrypto -lopus -lsodium -lz" # add dpp's deps
-        )
-        target_link_libraries(SerialPrograms PRIVATE libdpp)
-    endif()
-
     if (APPLE)
-        # Add -Wno-c11-extensions to avoid clang gives
-        # /usr/local/Cellar/opencv/4.5.5_3/include/opencv4/opencv2/core/mat.inl.hpp:2116:9: error: '_Atomic' is a C11 extension
-        # when compiling OpenCV
-        # target_compile_options(SerialPrograms PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-c11-extensions)
         target_compile_options(SerialPrograms PRIVATE -Wall -Wextra -Wpedantic -Werror)
     else()
         # Assume GCC
