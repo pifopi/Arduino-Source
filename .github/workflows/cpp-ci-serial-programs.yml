@@ -20,6 +20,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         path: Arduino-Source
+        submodules: 'recursive'
     - uses: actions/checkout@v4
       with:
         repository: 'PokemonAutomation/Packages'
@@ -37,12 +38,16 @@ jobs:
       with:
         version: ${{ matrix.qt_version }}
         modules: ${{ matrix.qt_modules }}
+    - name: Vcpkg setup
+      run: |
+        cd Arduino-Source
+        git submodule foreach git fetch --unshallow || true
     - name: Generate binaries
       run: |
         cd Arduino-Source/SerialPrograms
         mkdir bin
         cd bin
-        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }}
+        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} -DCMAKE_TOOLCHAIN_FILE="../../vcpkg/scripts/buildsystems/vcpkg.cmake"
         cmake --build . --config Release --parallel 10
     - name: Copy resources
       if: startsWith(matrix.os, 'windows')
