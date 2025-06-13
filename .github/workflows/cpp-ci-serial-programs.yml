@@ -29,11 +29,11 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
-        sudo apt install libopencv-dev libx11-dev libxft-dev libxext-dev
+        sudo apt install libx11-dev libxft-dev libxext-dev
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
-        brew install opencv onnxruntime
+        brew install onnxruntime
     - uses: jurplel/install-qt-action@v4
       with:
         version: ${{ matrix.qt_version }}
