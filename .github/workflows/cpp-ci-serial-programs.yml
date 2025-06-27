@@ -20,6 +20,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         path: Arduino-Source
+        submodules: 'recursive'
     - uses: actions/checkout@v4
       with:
         repository: 'PokemonAutomation/Packages'
@@ -28,21 +29,25 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
-        sudo apt install libopencv-dev
+        sudo apt install autoconf automake libltdl-dev libsystemd-dev libtool libx11-dev libxext-dev libxft-dev python3-jinja2
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
-        brew install opencv onnxruntime
+        brew install automake onnxruntime
     - uses: jurplel/install-qt-action@v4
       with:
         version: ${{ matrix.qt_version }}
         modules: ${{ matrix.qt_modules }}
+    - name: Vcpkg setup
+      run: |
+        cd Arduino-Source
+        git submodule foreach git fetch --unshallow || true
     - name: Generate binaries
       run: |
         cd Arduino-Source/SerialPrograms
         mkdir bin
         cd bin
-        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }}
+        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} -DCMAKE_TOOLCHAIN_FILE="../../vcpkg/scripts/buildsystems/vcpkg.cmake"
         cmake --build . --config Release --parallel 10
     - name: Copy resources
       if: startsWith(matrix.os, 'windows')
