@@ -6,10 +6,12 @@
   ],
   "overrides": [
     {
-      "$explanation": [ "This is because latest dpp version does not compile without updating code in PA" ],
+      "$explanation": [
+        "This is because latest dpp version does not compile without updating code in PA"
+      ],
       "name": "dpp",
       "version": "10.0.31#0"
     }
   ],
-  "builtin-baseline": "f75c836a67777a86a2c1116a28b179827f028b66"
+  "builtin-baseline": "b28d7e55666d6819ec408e392b8e0cdcfc2df6bd"
 }
