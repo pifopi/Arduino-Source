@@ -43,7 +43,7 @@ jobs:
         sudo apt install libltdl-dev
         
         echo Install dependencies for libxcrypt
-        sudo pip3 install Jinja2
+        sudo pip install jinja2
         
         sudo apt install autoconf automake libsystemd-dev libtool
     - name: Install dependencies
