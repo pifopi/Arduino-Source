@@ -29,8 +29,23 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
-        sudo apt install autoconf automake libltdl-dev libsystemd-dev libtool libx11-dev libxext-dev libxft-dev python3-jinja2
-        pip install python3-jinja2
+        
+        echo Install dependencies for openssl
+        sudo apt install linux-libc-dev
+        
+        echo Install dependencies for cairo
+        sudo apt install libx11-dev libxft-dev libxext-dev
+        
+        echo Install dependencies for libepoxy
+        sudo apt install libx11-dev
+        
+        echo Install dependencies for libxcrypt
+        sudo apt install libltdl-dev
+        
+        echo Install dependencies for libxcrypt
+        sudo pip3 install Jinja2
+        
+        sudo apt install autoconf automake libsystemd-dev libtool
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
