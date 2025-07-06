@@ -29,7 +29,8 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
-        sudo apt install autoconf automake libarchive-dev libltdl-dev libqrencode-dev libsystemd-dev libtool libx11-dev libxext-dev libxft-dev python3-jinja2
+        sudo apt install autoconf automake libltdl-dev libsystemd-dev libtool libx11-dev libxext-dev libxft-dev python3-jinja2
+        pip3 install jinja2
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
