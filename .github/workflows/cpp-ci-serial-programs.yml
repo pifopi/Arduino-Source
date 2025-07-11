@@ -41,7 +41,7 @@ jobs:
         sudo apt install libx11-dev libxft-dev libxext-dev
         
         echo Install dependencies for libepoxy
-        sudo apt install libx11-dev
+        sudo apt install libx11-dev libgles2-mesa-dev
         
         echo Install dependencies for libxcrypt
         sudo apt install libltdl-dev
