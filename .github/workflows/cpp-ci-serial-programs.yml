@@ -25,6 +25,10 @@ jobs:
       with:
         repository: 'PokemonAutomation/Packages'
         path: Packages
+    - uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ matrix.qt_version }}
+        modules: ${{ matrix.qt_modules }}
     - name: Install dependencies
       if: startsWith(matrix.os, 'ubuntu')
       run: |
@@ -50,10 +54,6 @@ jobs:
       if: startsWith(matrix.os, 'mac')
       run: |
         brew install automake onnxruntime
-    - uses: jurplel/install-qt-action@v4
-      with:
-        version: ${{ matrix.qt_version }}
-        modules: ${{ matrix.qt_modules }}
     - name: Vcpkg setup
       run: |
         cd Arduino-Source
