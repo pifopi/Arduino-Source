@@ -49,6 +49,9 @@ jobs:
         echo Install dependencies for libsystemd
         sudo ${{ env.pythonLocation }}/bin/python3 -m pip install jinja2
         
+        echo Install dependencies for libsystemd
+        sudo apt install libxi-dev libxtst-dev
+        
         sudo apt install autoconf automake libtool
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
