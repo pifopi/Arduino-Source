@@ -33,6 +33,7 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt update
+        sudo apt upgrade
         
         echo Install dependencies for openssl
         sudo apt install linux-libc-dev
@@ -49,8 +50,13 @@ jobs:
         echo Install dependencies for libsystemd
         sudo ${{ env.pythonLocation }}/bin/python3 -m pip install jinja2
         
-        echo Install dependencies for libsystemd
+        echo Install dependencies for at-spi2-core
         sudo apt install libxi-dev libxtst-dev
+
+        echo Install dependencies for gtk3
+        sudo apt install libxrandr-dev
+
+        libxrandr-dev
         
         sudo apt install autoconf automake libtool
     - name: Install dependencies
