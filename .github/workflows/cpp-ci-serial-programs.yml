@@ -34,17 +34,43 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade
-        sudo apt install libopencv-dev
+
+        echo Install dependencies for openssl
+        sudo apt install linux-libc-dev
+        
+        echo Install dependencies for cairo
+        sudo apt install libx11-dev libxft-dev libxext-dev
+        
+        echo Install dependencies for libepoxy
+        sudo apt install libx11-dev libgles2-mesa-dev
+        
+        echo Install dependencies for libxcrypt
+        sudo apt install libltdl-dev
+        
+        echo Install dependencies for libsystemd
+        sudo ${{ env.pythonLocation }}/bin/python3 -m pip install jinja2
+        
+        echo Install dependencies for at-spi2-core
+        sudo apt install libxi-dev libxtst-dev
+
+        echo Install dependencies for gtk3
+        sudo apt install libxrandr-dev
+        
+        sudo apt install autoconf automake libtool
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
-        brew install opencv onnxruntime
+        brew install automake onnxruntime
+    - name: Vcpkg setup
+      run: |
+        cd Arduino-Source
+        git submodule foreach git fetch --unshallow || true
     - name: Generate binaries
       run: |
         cd Arduino-Source/SerialPrograms
         mkdir bin
         cd bin
-        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }}
+        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} -DCMAKE_TOOLCHAIN_FILE="../../vcpkg/scripts/buildsystems/vcpkg.cmake"
         cmake --build . --config Release --parallel 10
     - name: Copy resources
       if: startsWith(matrix.os, 'windows')
