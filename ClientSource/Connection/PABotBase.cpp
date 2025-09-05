@@ -236,7 +236,7 @@ void PABotBase::clear_all_active_commands(uint64_t seqnum){
 
         if (iter->second.state == AckState::NOT_ACKED){
             //  Convert the command into a no-op request.
-            SerialPABotBase::DeviceRequest_program_id request{};
+            SerialPABotBase::DeviceRequest_program_id request;
             BotBaseMessage message = request.message();
             seqnum_t seqnum_s = (seqnum_t)iter->first;
             memcpy(&message.body[0], &seqnum_s, sizeof(seqnum_t));

@@ -24,7 +24,7 @@ uint32_t change_controller_mode(BotBaseController& botbase, uint32_t mode);
 
 class DeviceRequest_seqnum_reset : public BotBaseRequest{
 public:
-    pabb_MsgInfoSeqnumReset params;
+    pabb_MsgInfoSeqnumReset params{};
     DeviceRequest_seqnum_reset()
         : BotBaseRequest(false)
     {}
@@ -34,7 +34,7 @@ public:
 };
 class DeviceRequest_request_stop : public BotBaseRequest{
 public:
-    pabb_MsgRequestProtocolVersion params;
+    pabb_MsgRequestProtocolVersion params{};
     DeviceRequest_request_stop()
         : BotBaseRequest(false)
     {}
@@ -44,7 +44,7 @@ public:
 };
 class DeviceRequest_next_command_interrupt : public BotBaseRequest{
 public:
-    pabb_MsgRequestNextCmdInterrupt params;
+    pabb_MsgRequestNextCmdInterrupt params{};
     DeviceRequest_next_command_interrupt()
         : BotBaseRequest(false)
     {}
@@ -54,7 +54,7 @@ public:
 };
 class DeviceRequest_protocol_version : public BotBaseRequest{
 public:
-    pabb_MsgRequestProtocolVersion params;
+    pabb_MsgRequestProtocolVersion params{};
     DeviceRequest_protocol_version()
         : BotBaseRequest(false)
     {}
@@ -64,7 +64,7 @@ public:
 };
 class DeviceRequest_program_version : public BotBaseRequest{
 public:
-    pabb_MsgRequestProgramVersion params;
+    pabb_MsgRequestProgramVersion params{};
     DeviceRequest_program_version()
         : BotBaseRequest(false)
     {}
@@ -74,7 +74,7 @@ public:
 };
 class DeviceRequest_queue_size : public BotBaseRequest{
 public:
-    pabb_MsgRequestProgramVersion params;
+    pabb_MsgRequestProgramVersion params{};
     DeviceRequest_queue_size()
         : BotBaseRequest(false)
     {}
@@ -96,7 +96,7 @@ public:
 };
 class DeviceRequest_program_id : public BotBaseRequest{
 public:
-    pabb_MsgRequestProgramID params;
+    pabb_MsgRequestProgramID params{};
     DeviceRequest_program_id()
         : BotBaseRequest(false)
     {}
@@ -106,7 +106,7 @@ public:
 };
 class DeviceRequest_read_controller_mode : public BotBaseRequest{
 public:
-    pabb_MsgRequestReadControllerMode params;
+    pabb_MsgRequestReadControllerMode params{};
     DeviceRequest_read_controller_mode()
         : BotBaseRequest(false)
     {}
