@@ -2811,7 +2811,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         $<IF:$<CONFIG:Debug>,"${PROJECT_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win/bin/debug/discord_partner_sdk.dll","${PROJECT_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win/bin/release/discord_partner_sdk.dll">
-        $<TARGET_FILE_DIR:SerialPrograms>/Binaries64/discord_partner_sdk.dll
+        $<TARGET_FILE_DIR:SerialPrograms>/discord_partner_sdk.dll
     COMMENT "Copying Discord SDK DLL to Binaries64"
 )
 endif()
