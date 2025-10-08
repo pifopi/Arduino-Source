@@ -192,9 +192,6 @@ endfunction()
 apply_common_target_properties(SerialProgramsLib)
 apply_common_target_properties(SerialPrograms)
 
-set(DPP_DLL_DEBUG "${REPO_ROOT_DIR}/3rdPartyBinaries/Debug/dpp.dll")
-set(DPP_DLL_RELEASE "${REPO_ROOT_DIR}/3rdPartyBinaries/Release/dpp.dll")
-
 set(PACKAGES_DIR "${REPO_ROOT_DIR}/Packages")
 set(FIRMWARE_DIR "${PACKAGES_DIR}/Firmware")
 set(SCRIPTS_DIR "${PACKAGES_DIR}/Scripts")
@@ -580,6 +577,9 @@ if (WIN32)
     set(DISCORD_DIR "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win")
     set(DISCORD_DLL_DEBUG "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win/bin/debug/discord_partner_sdk.dll")
     set(DISCORD_DLL_RELEASE "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win/bin/release/discord_partner_sdk.dll")
+
+    set(DPP_DLL_DEBUG "${REPO_ROOT_DIR}/3rdPartyBinaries/Debug/dpp.dll")
+    set(DPP_DLL_RELEASE "${REPO_ROOT_DIR}/3rdPartyBinaries/Release/dpp.dll")
 
     if(QT_DEPLOY_FILES)
         # Run windeployqt if Qt DLLs are missing
