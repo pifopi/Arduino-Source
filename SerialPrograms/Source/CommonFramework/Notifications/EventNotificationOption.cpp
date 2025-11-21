@@ -176,10 +176,10 @@ EventNotificationOption::~EventNotificationOption(){}
 EventNotificationOption::EventNotificationOption(
     std::string label,
     bool enabled, bool ping,
-    std::chrono::seconds rate_limit
+    [[maybe_unused]] std::chrono::seconds rate_limit
 )
     : StaticTableRow(label)
-    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, rate_limit)
+    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, std::chrono::seconds(0))
     , m_test_button(*this)
 {
     add_option(m_data->m_enabled, "Enabled");
@@ -196,10 +196,10 @@ EventNotificationOption::EventNotificationOption(
     std::string label,
     bool enabled, bool ping,
     std::vector<std::string> tags,
-    std::chrono::seconds rate_limit
+    [[maybe_unused]] std::chrono::seconds rate_limit
 )
     : StaticTableRow(label)
-    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, std::move(tags), rate_limit)
+    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, std::move(tags), std::chrono::seconds(0))
     , m_test_button(*this)
 {
     add_option(m_data->m_enabled, "Enabled");
@@ -217,10 +217,10 @@ EventNotificationOption::EventNotificationOption(
     bool enabled, bool ping,
     ImageAttachmentMode screenshot,
     std::vector<std::string> tags,
-    std::chrono::seconds rate_limit
+    [[maybe_unused]] std::chrono::seconds rate_limit
 )
     : StaticTableRow(label)
-    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, screenshot, std::move(tags), rate_limit)
+    , m_data(CONSTRUCT_TOKEN, std::move(label), enabled, ping, screenshot, std::move(tags), std::chrono::seconds(0))
     , m_test_button(*this)
 {
     add_option(m_data->m_enabled, "Enabled");

@@ -84,7 +84,7 @@ ShinyHunt_BenchSit::ShinyHunt_BenchSit()
         "Run forward and backward for this long after each day change to "
         "increase the spawn radius. Set to zero to disable this.",
         LockMode::UNLOCK_WHILE_RUNNING,
-        "2000 ms"
+        "3000 ms"
     )
     , SHINY_DETECTED(
         "Shiny Detected", "",

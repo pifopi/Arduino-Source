@@ -101,7 +101,7 @@ JacintheInfiniteFarmer::JacintheInfiniteFarmer()
         "<b>Number of Rounds to Run:</b><br>"
         "Zero will run until 'Stop after Current Round' is pressed or the program is manually stopped.</b>",
         LockMode::UNLOCK_WHILE_RUNNING,
-        100,
+        0,
         0
     )
     , GO_HOME_WHEN_DONE(false)
