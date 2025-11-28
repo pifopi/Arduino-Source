@@ -57,7 +57,7 @@ void Thread::join(){
 
     Data& data = m_data;
 
-#if 0
+#if 1
     //
     //  Even std::condition_variable is broken!
     //
