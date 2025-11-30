@@ -181,6 +181,15 @@ function(apply_common_target_properties target_name)
     target_link_libraries(${target_name} PRIVATE Qt${QT_MAJOR}::Widgets Qt${QT_MAJOR}::SerialPort Qt${QT_MAJOR}::Multimedia Qt${QT_MAJOR}::MultimediaWidgets)
     target_link_libraries(${target_name} PRIVATE Threads::Threads)
 
+    find_package(dpp CONFIG REQUIRED)
+    target_link_libraries(${target_name} PRIVATE dpp::dpp)
+
+    find_package(nlohmann_json CONFIG REQUIRED)
+    target_link_libraries(${target_name} PRIVATE nlohmann_json::nlohmann_json)
+
+    find_package(OpenCV CONFIG REQUIRED)
+    target_link_libraries(${target_name} PRIVATE ${OpenCV_LIBS})
+
     #add defines
     target_compile_definitions(${target_name} PRIVATE NOMINMAX DPP_NO_DEPRECATED)
 
@@ -241,17 +250,6 @@ if(NOT EXISTS "${DEST_DIR}/Scripts")
 endif()
 
 if (WIN32)
-    add_library(OpenCV_lib IMPORTED UNKNOWN)
-    target_include_directories(SerialProgramsLib SYSTEM PRIVATE ../3rdParty/opencv-4.12.0/)
-    set_target_properties(OpenCV_lib PROPERTIES
-        IMPORTED_LOCATION_RELEASE           ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/opencv_world4120.lib
-        IMPORTED_LOCATION_DEBUG             ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/opencv_world4120d.lib
-        MAP_IMPORTED_CONFIG_DEBUG           DEBUG
-        MAP_IMPORTED_CONFIG_RELEASE         RELEASE
-        MAP_IMPORTED_CONFIG_RELWITHDEBINFO  RELEASE
-        MAP_IMPORTED_CONFIG_MINSIZEREL      RELEASE
-    )
-
     add_library(ONNX_lib IMPORTED UNKNOWN)
     target_include_directories(SerialProgramsLib SYSTEM PRIVATE ../3rdParty/ONNX/)
     set_target_properties(ONNX_lib PROPERTIES
@@ -261,16 +259,6 @@ if (WIN32)
     add_library(ONNX_Providers_lib IMPORTED UNKNOWN)
     set_target_properties(ONNX_Providers_lib PROPERTIES
         IMPORTED_LOCATION   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/onnxruntime_providers_shared.lib
-    )
-
-    add_library(dpp_lib IMPORTED UNKNOWN)
-    set_target_properties(dpp_lib PROPERTIES
-        IMPORTED_LOCATION_RELEASE           ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/dpp.lib
-        IMPORTED_LOCATION_DEBUG             ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/dppd.lib
-        MAP_IMPORTED_CONFIG_DEBUG           DEBUG
-        MAP_IMPORTED_CONFIG_RELEASE         RELEASE
-        MAP_IMPORTED_CONFIG_RELWITHDEBINFO  RELEASE
-        MAP_IMPORTED_CONFIG_MINSIZEREL      RELEASE
     )
 
     add_library(discord_lib IMPORTED UNKNOWN)
@@ -287,10 +275,8 @@ if (WIN32)
     target_link_libraries(
         SerialProgramsLib PRIVATE
         tesseractPA.lib
-        OpenCV_lib
         ONNX_lib
         ONNX_Providers_lib
-        dpp_lib
         discord_lib
     )
 
@@ -431,12 +417,6 @@ else() # macOS and Linux
         endif()
     endif() # end Linux
 
-    # Find OpenCV
-    pkg_search_module(OpenCV REQUIRED opencv4 opencv)
-    target_include_directories(SerialProgramsLib SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS}) # "SYSTEM" to suppress warnings
-    target_link_directories(SerialProgramsLib PUBLIC ${OpenCV_LIBRARY_DIRS})
-    target_link_libraries(SerialProgramsLib PUBLIC ${OpenCV_LINK_LIBRARIES})
-
     #we hope to use our own Tesseract build in future so we can rid that dependency
     #but right now to run on Linux and Mac we need to use external Tesseract library
     pkg_search_module(TESSERACT tesseract)
@@ -449,16 +429,6 @@ else() # macOS and Linux
         target_link_directories(SerialProgramsLib PUBLIC ${LEPTONICA_LIBRARY_DIRS})
         target_link_libraries(SerialProgramsLib PUBLIC ${TESSERACT_LINK_LIBRARIES})
         target_link_libraries(SerialProgramsLib PUBLIC ${LEPTONICA_LINK_LIBRARIES})
-    endif()
-
-    pkg_search_module(DPP dpp=10.0.22)
-    if (DPP_FOUND) # enable dpp integration
-        target_compile_definitions(SerialProgramsLib PUBLIC PA_DPP)
-        ## to build against headers within this repo and properly set flags ##
-        ## don't enable the following line ##
-        # target_include_directories(SerialProgramsLib PRIVATE ${DPP_INCLUDE_DIRS})
-        target_link_directories(SerialProgramsLib PUBLIC ${DPP_LIBRARY_DIRS})
-        target_link_libraries(SerialProgramsLib PUBLIC ${DPP_LIBRARIES})
     endif()
 
     if (APPLE)
@@ -561,11 +531,6 @@ SET_SOURCE_FILES_PROPERTIES(
 endif()
 
 if (WIN32)
-    set(OPENCV_DEBUG_ZIP "${REPO_ROOT_DIR}/3rdPartyBinaries/opencv_world4120d.zip")
-    set(OPENCV_DEBUG_DLL "${REPO_ROOT_DIR}/3rdPartyBinaries/opencv_world4120d.dll")
-    set(OPENCV_RELEASE_ZIP "${REPO_ROOT_DIR}/3rdPartyBinaries/opencv_world4120.zip")
-    set(OPENCV_RELEASE_DLL "${REPO_ROOT_DIR}/3rdPartyBinaries/opencv_world4120.dll")
-
     set(DISCORD_ZIP "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win.zip")
     set(DISCORD_DIR "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win")
     set(DISCORD_DLL_DEBUG "${REPO_ROOT_DIR}/3rdPartyBinaries/discord_social_sdk_win/bin/debug/discord_partner_sdk.dll")
@@ -610,24 +575,6 @@ if (WIN32)
         message(STATUS "Discord SDK not found, extracting from zip...")
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E tar xf "${DISCORD_ZIP}"
-            WORKING_DIRECTORY "${REPO_ROOT_DIR}/3rdPartyBinaries"
-        )
-    endif()
-
-    # Extract OpenCV debug DLL if missing
-    if (NOT EXISTS "${OPENCV_DEBUG_DLL}")
-        message(STATUS "OpenCV debug DLL not found, extracting from zip...")
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E tar xf "${OPENCV_DEBUG_ZIP}"
-            WORKING_DIRECTORY "${REPO_ROOT_DIR}/3rdPartyBinaries"
-        )
-    endif()
-
-    # Extract OpenCV release DLL if missing
-    if (NOT EXISTS "${OPENCV_RELEASE_DLL}")
-        message(STATUS "OpenCV release DLL not found, extracting from zip...")
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E tar xf "${OPENCV_RELEASE_ZIP}"
             WORKING_DIRECTORY "${REPO_ROOT_DIR}/3rdPartyBinaries"
         )
     endif()
