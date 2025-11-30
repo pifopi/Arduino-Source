@@ -1,0 +1,8 @@
+{
+  "dependencies": [
+    "dpp",
+    "nlohmann-json",
+    "opencv"
+  ],
+  "builtin-baseline": "594ad8871e1e8e45f8e626c015fd611163430207"
+}
