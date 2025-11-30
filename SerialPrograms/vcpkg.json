@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    "dpp",
+    "nlohmann-json",
+    "opencv"
+  ],
+  "overrides": [
+    {
+      "$explanation": [
+        "This is because latest dpp version does not compile without updating code in PA"
+      ],
+      "name": "dpp",
+      "version": "10.0.31#0"
+    }
+  ],
+  "builtin-baseline": "2041718d8942de33c7d10e9e2fbf22b5e24d352e"
+}
