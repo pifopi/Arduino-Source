@@ -8,7 +8,7 @@
 #define PokemonAutomation_Common_Json_JsonTools_H
 
 #include <vector>
-#include "3rdParty/nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 #include "JsonValue.h"
 
 class QJsonValue;
