@@ -10,7 +10,7 @@
         "This is because latest dpp version does not compile without updating code in PA"
       ],
       "name": "dpp",
-      "version": "10.0.31#0"
+      "version": "10.1.2#0"
     }
   ],
   "builtin-baseline": "5bf0c55239da398b8c6f450818c9e28d36bf9966"
