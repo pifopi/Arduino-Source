@@ -69,22 +69,6 @@ void PreloadSettings::load(const JsonValue& json){
         return;
     }
 
-    //  Naughty mode.
-    obj->read_boolean(NAUGHTY_MODE, "NAUGHTY_MODE");
-
-    //  Developer mode stuff.
-    const std::string* dev_token = obj->get_string("DEVELOPER_TOKEN");
-    if (dev_token){
-        QCryptographicHash hash(QCryptographicHash::Algorithm::Sha256);
-#if QT_VERSION < 0x060700
-        hash.addData(dev_token->c_str(), (int)dev_token->size());
-#else
-        QByteArrayView dataView(dev_token->data(), dev_token->size());
-        hash.addData(dataView);
-#endif
-        DEVELOPER_MODE = TOKENS.find(hash.result().toHex().toStdString()) != TOKENS.end();
-    }
-
     const JsonObject* debug_obj = obj->get_object("DEBUG");
     if (debug_obj){
         debug_obj->read_boolean(DEBUG.COLOR_CHECK, "COLOR_CHECK");
