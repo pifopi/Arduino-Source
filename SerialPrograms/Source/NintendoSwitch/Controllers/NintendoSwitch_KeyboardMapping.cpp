@@ -167,8 +167,8 @@ std::vector<std::unique_ptr<EditableTableRow>> ProControllerKeyboardMappingTable
     ret.emplace_back(make_mapping("Dpad Left",          Qt::Key::Key_4,         ProControllerDeltas{.dpad_x = -1, .dpad_y =  0}));
     ret.emplace_back(make_mapping("Dpad Up+Left",       Qt::Key::Key_7,         ProControllerDeltas{.dpad_x = -1, .dpad_y = -1}));
 
-    ret.emplace_back(make_mapping("Left-Stick Up",      Qt::Key::Key_W,         ProControllerDeltas{.left_x =  0, .left_y = -1}));
-    ret.emplace_back(make_mapping("Left-Stick Left",    Qt::Key::Key_A,         ProControllerDeltas{.left_x = -1, .left_y =  0}));
+    ret.emplace_back(make_mapping("Left-Stick Up",      Qt::Key::Key_Z,         ProControllerDeltas{.left_x =  0, .left_y = -1}));
+    ret.emplace_back(make_mapping("Left-Stick Left",    Qt::Key::Key_Q,         ProControllerDeltas{.left_x = -1, .left_y =  0}));
     ret.emplace_back(make_mapping("Left-Stick Down",    Qt::Key::Key_S,         ProControllerDeltas{.left_x =  0, .left_y = +1}));
     ret.emplace_back(make_mapping("Left-Stick Right",   Qt::Key::Key_D,         ProControllerDeltas{.left_x = +1, .left_y =  0}));
     ret.emplace_back(make_mapping("Right-Stick Up",     Qt::Key::Key_Up,        ProControllerDeltas{.right_x =  0, .right_y = -1}));
@@ -188,7 +188,7 @@ std::vector<std::unique_ptr<EditableTableRow>> ProControllerKeyboardMappingTable
     ret.emplace_back(make_mapping("X",              Qt::Key::Key_Apostrophe,ProControllerDeltas{.buttons = BUTTON_X}));
     ret.emplace_back(make_mapping("X",              Qt::Key::Key_QuoteDbl,  ProControllerDeltas{.buttons = BUTTON_X}));
 
-    ret.emplace_back(make_mapping("L",              Qt::Key::Key_Q,             ProControllerDeltas{.buttons = BUTTON_L}));
+    ret.emplace_back(make_mapping("L",              Qt::Key::Key_A,             ProControllerDeltas{.buttons = BUTTON_L}));
     ret.emplace_back(make_mapping("R",              Qt::Key::Key_E,             ProControllerDeltas{.buttons = BUTTON_R}));
     ret.emplace_back(make_mapping("ZL",             Qt::Key::Key_R,             ProControllerDeltas{.buttons = BUTTON_ZL}));
     ret.emplace_back(make_mapping("R",              Qt::Key::Key_BraceRight,    ProControllerDeltas{.buttons = BUTTON_R}));
