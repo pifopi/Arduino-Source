@@ -20,7 +20,7 @@ KeyboardLayoutOption::KeyboardLayoutOption()
             {KeyboardLayout::AZERTY, "azerty", "AZERTY"},
         },
         LockMode::LOCK_WHILE_RUNNING,
-        KeyboardLayout::QWERTY
+        KeyboardLayout::AZERTY
     )
 {}
 KeyboardLayoutOption::KeyboardLayoutOption(std::string label)
@@ -31,7 +31,7 @@ KeyboardLayoutOption::KeyboardLayoutOption(std::string label)
             {KeyboardLayout::AZERTY, "azerty", "AZERTY"},
         },
         LockMode::LOCK_WHILE_RUNNING,
-        KeyboardLayout::QWERTY
+        KeyboardLayout::AZERTY
     )
 {}
 
