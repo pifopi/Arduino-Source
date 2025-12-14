@@ -92,7 +92,7 @@ DonutMaker::DonutMaker()
         "<br>Ex. For a target donut of Big Haul Lv.3, Berry Lv.3, and any or none for the 3rd power, set the number as 2."
         "<br>Then, in the flavor powers table, make sure to add Big Haul Lv.3 and Berry Lv. 3.",
         LockMode::LOCK_WHILE_RUNNING,
-        1, 1, 3
+        1, 2, 3
         )
     //, NUM_DONUTS(
     //    "<b>Number of Donuts:</b><br>The number of donuts to make.",

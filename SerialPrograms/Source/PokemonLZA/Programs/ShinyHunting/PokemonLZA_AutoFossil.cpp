@@ -100,7 +100,7 @@ AutoFossil::AutoFossil()
         "<b>Continue after finding a match:</b><br>"
         "After finding a match, the program will go to the next box, save and continue hunting. Beware, it will use a lot of fossils so start the program with a lot of them and enough empty boxes.",
         LockMode::LOCK_WHILE_RUNNING,
-        false
+        true
     )
     , TAKE_VIDEO(
         "Take a video When Found:",

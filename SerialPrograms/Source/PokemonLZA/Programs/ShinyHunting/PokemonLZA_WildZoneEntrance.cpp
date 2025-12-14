@@ -60,7 +60,7 @@ WildZoneOption::WildZoneOption()
                 {WildZone::WILD_ZONE_20_WITH_DISTORTION, "wild-zone-20-distortion", "Wild Zone 20 With Distortion"},
             },
             LockMode::LOCK_WHILE_RUNNING,
-            WildZone::WILD_ZONE_1
+            WildZone::WILD_ZONE_20_WITH_DISTORTION
         )
     {}
         
@@ -122,7 +122,7 @@ ShinyHunt_WildZoneEntrance::ShinyHunt_WildZoneEntrance()
         "<b>Walk Time in Zone:</b><br>Walk this long in the zone after passing through the gate.",
         LockMode::UNLOCK_WHILE_RUNNING,
         0ms, 10s,
-        "500 ms"
+        "5000 ms"
     )
     , RUNNING(
         "<b>Running:</b><br>Running instead of walking while in the zone",
