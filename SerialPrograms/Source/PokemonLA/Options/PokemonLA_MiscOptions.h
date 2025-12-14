@@ -58,7 +58,7 @@ public:
                 {StopOn::ShinyAndAlpha, "shiny-and-alpha",  "Shiny and Alpha"},
             },
             LockMode::UNLOCK_WHILE_RUNNING,
-            StopOn::ShinyOrAlpha
+            StopOn::Shiny
         )
     {}
 };
