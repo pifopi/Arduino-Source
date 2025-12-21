@@ -2,7 +2,8 @@
   "dependencies": [
     "dpp",
     "nlohmann-json",
-    "opencv"
+    "opencv",
+    "sfml"
   ],
   "builtin-baseline": "594ad8871e1e8e45f8e626c015fd611163430207"
 }
