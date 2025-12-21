@@ -35,6 +35,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
       with:
+        fetch-depth: '0'
         submodules: 'recursive'
     - uses: jurplel/install-qt-action@v4
       with:
@@ -45,17 +46,48 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade
-        sudo apt install libopencv-dev
+
+        echo Install dependencies for openssl
+        sudo apt install linux-libc-dev
+        
+        echo Install dependencies for cairo
+        sudo apt install libx11-dev libxft-dev libxext-dev
+        
+        echo Install dependencies for libepoxy
+        sudo apt install libx11-dev libgles2-mesa-dev
+        
+        echo Install dependencies for libxcrypt
+        sudo apt install libltdl-dev
+        
+        echo Install dependencies for libsystemd
+        sudo ${{ env.pythonLocation }}/bin/python3 -m pip install jinja2
+        
+        echo Install dependencies for at-spi2-core
+        sudo apt install libxi-dev libxtst-dev
+
+        echo Install dependencies for gtk3
+        sudo apt install libxrandr-dev
+
+        echo Install dependencies for opencv
+        sudo apt install build-essential cmake pkg-config
+
+        echo Install dependencies for gperf
+        sudo apt install autoconf autoconf-archive automake
+        
+        sudo apt install libtool mono-complete
     - name: Install dependencies
       if: startsWith(matrix.os, 'mac')
       run: |
-        brew install opencv onnxruntime
+        brew install automake mono onnxruntime
+    # - name: Vcpkg setup
+    #   run: |
+    #     git submodule foreach git fetch --unshallow || true
     - name: Generate binaries
       run: |
         cd SerialPrograms
         mkdir bin
         cd bin
-        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} ${{ matrix.cmake_additional_param }}
+        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} ${{ matrix.cmake_additional_param }} -DCMAKE_TOOLCHAIN_FILE="../../vcpkg/scripts/buildsystems/vcpkg.cmake"
         cmake --build . --config RelWithDebInfo --parallel 10
     - name: Prepare upload folder
       if: startsWith(matrix.os, 'windows')
