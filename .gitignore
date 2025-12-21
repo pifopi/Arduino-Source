@@ -62,8 +62,6 @@ __pycache__
 # Jupyter Notebooks
 *.ipynb
 
-vcpkg/
-
 CLAUDE.md
 
 build_*/
