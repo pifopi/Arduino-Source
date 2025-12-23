@@ -10,6 +10,7 @@
 #include <iomanip>
 #include "Exceptions.h"
 #include "PrettyPrint.h"
+#include "CommonFramework/Logging/Logger.h"
 
 namespace PokemonAutomation{
 
@@ -169,6 +170,12 @@ std::string tostr_bytes(uint64_t bytes){
 std::string tostr_default(double x){
     std::ostringstream ss;
     ss << x;
+
+    std::string old_string = ss.str();
+    std::string new_string = std::format("{}", x);
+    if (old_string != new_string){
+        global_logger_tagged().log(std::format("Warning: tostr_default produced different result than std::format. old:{} new:{}", old_string, new_string), COLOR_RED);
+    }
     return ss.str();
 }
 std::string tostr_fixed(double x, int precision){
@@ -176,6 +183,12 @@ std::string tostr_fixed(double x, int precision){
     out << std::setprecision(precision);
     out << std::fixed;
     out << x;
+
+    std::string old_string = out.str();
+    std::string new_string = std::format("{:.{}f}", x, precision);
+    if (old_string != new_string) {
+        global_logger_tagged().log(std::format("Warning: tostr_fixed produced different result than std::format. old:{} new:{}", old_string, new_string), COLOR_RED);
+    }
     return out.str();
 }
 
