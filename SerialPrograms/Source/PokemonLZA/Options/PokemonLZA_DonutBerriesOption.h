@@ -91,7 +91,7 @@ public:
 
 class DonutBerriesTableRow : public EditableTableRow{
 public:
-    DonutBerriesTableRow(EditableTableOption& parent_table);
+    DonutBerriesTableRow(EditableTableOption& parent_table, const std::string& default_berry = "hyper-cheri-berry");
     virtual std::unique_ptr<EditableTableRow> clone() const override;
 
 public:
@@ -114,7 +114,7 @@ public:
 class FlavorPowerTableRow : public EditableTableRow, public ConfigOption::Listener{
 public:
     ~FlavorPowerTableRow();
-    FlavorPowerTableRow(EditableTableOption& parent_table);
+    FlavorPowerTableRow(EditableTableOption& parent_table, Flavor_Powers default_power = Flavor_Powers::alpha, Power_Pokemon_Types default_type_pokemon = Power_Pokemon_Types::all);
     virtual std::unique_ptr<EditableTableRow> clone() const override;
 
     FlavorPowerTableEntry snapshot() const;

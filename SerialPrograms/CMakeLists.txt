@@ -196,52 +196,6 @@ endfunction()
 apply_common_target_properties(SerialProgramsLib)
 apply_common_target_properties(SerialPrograms)
 
-# REPO_ROOT_DIR: the root folder of the git repository, "Arduino-Source/"
-set(PACKAGES_DIR "${REPO_ROOT_DIR}/Packages")
-set(FIRMWARE_DIR "${PACKAGES_DIR}/Firmware")
-set(SCRIPTS_DIR "${PACKAGES_DIR}/Scripts")
-set(RESOURCES_DIR "${PACKAGES_DIR}/Resources")
-
-# Clone Packages repo if not already present
-if (NOT EXISTS "${PACKAGES_DIR}")
-    message(STATUS "Cloning Packages repo at configure time...")
-    execute_process(
-        COMMAND git clone --branch master https://github.com/PokemonAutomation/Packages "${PACKAGES_DIR}"
-        WORKING_DIRECTORY "${REPO_ROOT_DIR}"
-    )
-    add_custom_target(clone_packages DEPENDS "${PACKAGES_DIR}")
-    add_dependencies(SerialPrograms clone_packages)
-else()
-    add_custom_target(clone_packages COMMENT "Packages repo already present, skipping clone.")
-endif()
-
-# Copy resources if not already present
-if(NOT EXISTS "${DEST_DIR}/Resources")
-    add_custom_command(
-        TARGET SerialPrograms POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "[Deploy] Copying resources ${RESOURCES_DIR} to ${DEST_DIR}/Resources"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${RESOURCES_DIR}" "${DEST_DIR}/Resources"
-    )
-endif()
-
-# Copy firmware if not already present
-if(NOT EXISTS "${DEST_DIR}/Firmware")
-    add_custom_command(
-        TARGET SerialPrograms POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "[Deploy] Copying firmware"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${FIRMWARE_DIR}" "${DEST_DIR}/Firmware"
-    )
-endif()
-
-# Copy scripts if not already present
-if(NOT EXISTS "${DEST_DIR}/Scripts")
-    add_custom_command(
-        TARGET SerialPrograms POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "[Deploy] Copying scripts"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${SCRIPTS_DIR}" "${DEST_DIR}/Scripts"
-    )
-endif()
-
 if (WIN32)
     add_library(OpenCV_lib IMPORTED UNKNOWN)
     target_include_directories(SerialProgramsLib SYSTEM PRIVATE ../3rdParty/opencv-4.12.0/)
