@@ -12,11 +12,10 @@
 #include "CommonTools/InferenceCallbacks/VisualInferenceCallback.h"
 #include "CommonTools/Async/InferenceRoutines.h"
 #include "CommonTools/VisualDetectors/BlackScreenDetector.h"
-#include "Controllers/ControllerTypes.h"
 #include "NintendoSwitch/NintendoSwitch_Settings.h"
 #include "NintendoSwitch/Commands/NintendoSwitch_Commands_PushButtons.h"
 #include "NintendoSwitch/Commands/NintendoSwitch_Commands_Superscalar.h"
-#include "NintendoSwitch/Inference/NintendoSwitch_DetectHome.h"
+#include "NintendoSwitch/Inference/NintendoSwitch_CheckOnlineDetector.h"
 #include "NintendoSwitch/Inference/NintendoSwitch_HomeMenuDetector.h"
 #include "NintendoSwitch/Inference/NintendoSwitch_CloseGameDetector.h"
 #include "NintendoSwitch/Inference/NintendoSwitch_StartGameUserSelectDetector.h"
@@ -115,10 +114,10 @@ void close_game_from_home_blind(ConsoleHandle& console, ProControllerContext& co
     // regardless of whether the game is initially open or closed.
 
                                                     // if game initially open.  |  if game initially closed
-    pbf_mash_button(context, BUTTON_X, 800ms);        // - Close game.            |  - does nothing
+    pbf_mash_button(context, BUTTON_X, 800ms);      // - Close game.            |  - does nothing
     ssf_press_dpad_ptv(context, DPAD_DOWN);         // - Does nothing.          |  - moves selector away from the closed game to avoid opening it.
     ssf_press_dpad_ptv(context, DPAD_DOWN);         // - Does nothing.          |  - Press Down a second time in case we drop one.
-    pbf_mash_button(context, BUTTON_A, 400ms);         // - Confirm close game.    |  - opens an app on the home screen (e.g. Online)
+    pbf_mash_button(context, BUTTON_A, 400ms);      // - Confirm close game.    |  - opens an app on the home screen (e.g. Online)
     go_home(console, context);                      // - Does nothing.          |  - goes back to home screen.
 
     // fail-safe against button drops and unexpected error messages.
@@ -586,12 +585,12 @@ void start_game_from_home_with_inference(
             pbf_press_button(context, BUTTON_A, 80ms, start_game_wait);
             break;
         case 2:
-            console.log("Detected update menu.", COLOR_RED);
+            console.log("Detected update menu.", COLOR_BLUE);
             pbf_move_joystick(context, {0, +1}, 50ms, 0ms);
             pbf_press_button(context, BUTTON_A, 160ms, 840ms);
             break;
         case 3:
-            console.log("Detected check online.", COLOR_RED);
+            console.log("Detected check online.", COLOR_BLUE);
             context.wait_for(std::chrono::seconds(1));
             break;
         case 4:
