@@ -69,7 +69,7 @@ jobs:
         copy SWITCH1.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH1.JSON
         copy SWITCH2.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH2.JSON
         copy SWITCH3.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH3.JSON
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       if: startsWith(matrix.os, 'windows')
       with:
         name: Serial Programs (os=${{ matrix.os }} - compiler=${{ matrix.compiler }} - qt_version=${{ matrix.qt_version }})
