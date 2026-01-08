@@ -536,9 +536,9 @@ DonutBerriesTableCell::DonutBerriesTableCell(
     )
 {}
 
-DonutBerriesTableRow::DonutBerriesTableRow(EditableTableOption& parent_table)
+DonutBerriesTableRow::DonutBerriesTableRow(EditableTableOption& parent_table, const std::string& default_berry)
     : EditableTableRow(parent_table)
-    , berry("hyper-cheri-berry")
+    , berry(default_berry)
 {
     PA_ADD_OPTION(berry);
 }
@@ -565,7 +565,14 @@ std::vector<std::string> DonutBerriesTable::make_header() const{
 
 std::vector<std::unique_ptr<EditableTableRow>> DonutBerriesTable::make_defaults(){
     std::vector<std::unique_ptr<EditableTableRow>> ret;
-    ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this));
+    for (int i = 0; i < 4; i++)
+    {
+        ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this, "hyper-tanga-berry"));
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this, "hyper-haban-berry"));
+    }
     return ret;
 }
 
@@ -574,13 +581,13 @@ std::vector<std::unique_ptr<EditableTableRow>> DonutBerriesTable::make_defaults(
 
 FlavorPowerTableRow::FlavorPowerTableRow(EditableTableOption& parent_table)
     : EditableTableRow(parent_table)
-    , limit(LockMode::LOCK_WHILE_RUNNING, 1, 999, 1, 1)
+    , limit(LockMode::LOCK_WHILE_RUNNING, 1, 999, 248, 248)
     , power_1(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::alpha)
     , level_1(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
-    , power_2(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::any)
-    , level_2(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::any)
-    , power_3(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::any)
-    , level_3(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::any)
+    , power_2(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::teensy)
+    , level_2(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
+    , power_3(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::sparkling_any)
+    , level_3(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
 {
     PA_ADD_OPTION(limit);
     PA_ADD_OPTION(power_1);

@@ -156,7 +156,7 @@ public:
 
 class DonutBerriesTableRow : public EditableTableRow{
 public:
-    DonutBerriesTableRow(EditableTableOption& parent_table);
+    DonutBerriesTableRow(EditableTableOption& parent_table, const std::string& default_berry = "hyper-cheri-berry");
     virtual std::unique_ptr<EditableTableRow> clone() const override;
 
 public:
