@@ -56,9 +56,7 @@ jobs:
         brew install opencv onnxruntime
     - name: Generate binaries
       run: |
-        cd SerialPrograms
-        mkdir bin
-        cd bin
+        cd SerialPrograms\bin
         cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} ${{ matrix.cmake_additional_param }}
         cmake --build . --config RelWithDebInfo --parallel 10
     - name: Prepare upload folder
