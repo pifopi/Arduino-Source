@@ -92,18 +92,18 @@ DonutMaker::DonutMaker()
         "<br>Ex. For a target donut of Big Haul Lv.3, Berry Lv.3, and any or none for the 3rd power, set the number as 2."
         "<br>Then, in the flavor powers table, make sure to add Big Haul Lv.3 and Berry Lv. 3.",
         LockMode::LOCK_WHILE_RUNNING,
-        1, 1, 3
+        2, 1, 3
         )
     , NUM_DONUTS(
        "<b>Number of Donuts:</b><br>The program continues resetting and making donuts of required powers until this many donuts of required powers are made."
        "<br>Make sure you have enough berries to make this many donuts. The program will fail when not given enough berries.",
        LockMode::LOCK_WHILE_RUNNING,
-       1, 1, 999
+       124, 1, 999
     )
     , GO_HOME_WHEN_DONE(false)
     , NOTIFICATION_DONUT_FOUND(
         "Donut Found",
-        true, true, ImageAttachmentMode::JPG,
+        true, false, ImageAttachmentMode::JPG,
         {"Notifs"}
     )
     , NOTIFICATION_STATUS("Status Update", true, false, std::chrono::seconds(3600))

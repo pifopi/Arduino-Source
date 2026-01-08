@@ -268,9 +268,9 @@ DonutBerriesTableCell::DonutBerriesTableCell(
     )
 {}
 
-DonutBerriesTableRow::DonutBerriesTableRow(EditableTableOption& parent_table)
+DonutBerriesTableRow::DonutBerriesTableRow(EditableTableOption& parent_table, const std::string& default_berry)
     : EditableTableRow(parent_table)
-    , berry("hyper-cheri-berry")
+    , berry(default_berry)
 {
     PA_ADD_OPTION(berry);
 }
@@ -297,7 +297,14 @@ std::vector<std::string> DonutBerriesTable::make_header() const{
 
 std::vector<std::unique_ptr<EditableTableRow>> DonutBerriesTable::make_defaults(){
     std::vector<std::unique_ptr<EditableTableRow>> ret;
-    ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this));
+    for (int i = 0; i < 4; i++)
+    {
+        ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this, "hyper-tanga-berry"));
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        ret.emplace_back(std::make_unique<DonutBerriesTableRow>(*this, "hyper-haban-berry"));
+    }
     return ret;
 }
 
@@ -307,10 +314,10 @@ std::vector<std::unique_ptr<EditableTableRow>> DonutBerriesTable::make_defaults(
 FlavorPowerTableRow::~FlavorPowerTableRow(){
     power.remove_listener(*this);
 }
-FlavorPowerTableRow::FlavorPowerTableRow(EditableTableOption& parent_table)
+FlavorPowerTableRow::FlavorPowerTableRow(EditableTableOption& parent_table, Flavor_Powers default_power, Power_Pokemon_Types default_type_pokemon)
     : EditableTableRow(parent_table)
-    , power(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::alpha)
-    , type_pokemon(pokemon_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Pokemon_Types::all)
+    , power(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, default_power)
+    , type_pokemon(pokemon_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, default_type_pokemon)
     , type_item(item_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Item_Types::berries)
     , level(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
 {
@@ -379,7 +386,27 @@ std::vector<std::string> FlavorPowerTable::make_header() const{
 }
 std::vector<std::unique_ptr<EditableTableRow>> FlavorPowerTable::make_defaults(){
     std::vector<std::unique_ptr<EditableTableRow>> ret;
-    ret.emplace_back(new FlavorPowerTableRow(*this));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::all));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::normal));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::fire));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::water));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::electric));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::grass));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::ice));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::fighting));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::poison));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::ground));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::flying));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::psychic));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::bug));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::rock));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::ghost));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::dragon));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::dark));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::steel));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::sparkling, Power_Pokemon_Types::fairy));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::alpha));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Flavor_Powers::teensy));
     return ret;
 }
 
