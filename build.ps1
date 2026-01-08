@@ -65,8 +65,8 @@ switch ($PackageManagerAsEnum)
         conan install ..\..\.. --output-folder=. --build=missing -s "&:build_type=RelWithDebInfo" -s build_type=Release -s compiler.cppstd=23
     }
 }
-cmake ..\..\.. $cmakeCompilerAdditionalParam $cmakePackageManagerAdditionalParam
-cmake --build . --config RelWithDebInfo
 robocopy ..\..\..\..\..\CommandLineTests    . /s /XD .git
 robocopy ..\..\..\..\..\Packages            . /s /XD .git
+cmake ..\..\.. $cmakeCompilerAdditionalParam $cmakePackageManagerAdditionalParam
+cmake --build . --config RelWithDebInfo
 popd
