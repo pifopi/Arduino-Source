@@ -579,15 +579,15 @@ std::vector<std::unique_ptr<EditableTableRow>> DonutBerriesTable::make_defaults(
 
 
 
-FlavorPowerTableRow::FlavorPowerTableRow(EditableTableOption& parent_table)
+FlavorPowerTableRow::FlavorPowerTableRow(EditableTableOption& parent_table, const Power& power1, const Power& power2, const Power& power3)
     : EditableTableRow(parent_table)
-    , limit(LockMode::LOCK_WHILE_RUNNING, 1, 999, 248, 248)
-    , power_1(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::alpha)
-    , level_1(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
-    , power_2(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::teensy)
-    , level_2(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
-    , power_3(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, Flavor_Powers::sparkling_any)
-    , level_3(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, Power_Level::three)
+    , limit(LockMode::LOCK_WHILE_RUNNING, 1, 999, 999, 999)
+    , power_1(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, power1.flavor_power)
+    , level_1(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, power1.power_level)
+    , power_2(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING, power2.flavor_power)
+    , level_2(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, power2.power_level)
+    , power_3(flavor_power_enum_database(), LockMode::LOCK_WHILE_RUNNING,  power3.flavor_power)
+    , level_3(power_level_enum_database(), LockMode::LOCK_WHILE_RUNNING, power3.power_level)
 {
     PA_ADD_OPTION(limit);
     PA_ADD_OPTION(power_1);
@@ -640,7 +640,8 @@ std::vector<std::string> FlavorPowerTable::make_header() const{
 }
 std::vector<std::unique_ptr<EditableTableRow>> FlavorPowerTable::make_defaults(){
     std::vector<std::unique_ptr<EditableTableRow>> ret;
-    ret.emplace_back(new FlavorPowerTableRow(*this));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Power{ Flavor_Powers::sparkling_any, Power_Level::three }, Power{ Flavor_Powers::alpha , Power_Level::three }));
+    ret.emplace_back(new FlavorPowerTableRow(*this, Power{ Flavor_Powers::sparkling_any, Power_Level::three }, Power{ Flavor_Powers::teensy , Power_Level::three }));
     return ret;
 }
 
