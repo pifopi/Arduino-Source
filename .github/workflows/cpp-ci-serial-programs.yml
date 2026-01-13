@@ -50,13 +50,15 @@ jobs:
       if: startsWith(matrix.os, 'mac')
       run: |
         brew install opencv onnxruntime
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
     - name: Generate binaries
       run: |
         cd SerialPrograms
         mkdir bin
         cd bin
-        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} ${{ matrix.cmake_additional_param }}
-        cmake --build . --config RelWithDebInfo --parallel 10
+        conan install .. --output-folder=. --build=missing -s build_type=Release -s compiler.cppstd=23 -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+        cmake .. -DQT_MAJOR:STRING=${{ matrix.qt_version_major }} ${{ matrix.cmake_additional_param }} -DCMAKE_BUILD_TYPE=Release "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake"
     - name: Prepare upload folder
       if: startsWith(matrix.os, 'windows')
       run: |
