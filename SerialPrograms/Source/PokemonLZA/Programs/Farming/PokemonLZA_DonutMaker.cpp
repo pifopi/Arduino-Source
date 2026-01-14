@@ -95,12 +95,12 @@ DonutMaker::DonutMaker()
         "This takes precedent over the limits set in the Donuts table."
         "<br>Make sure you have enough berries to make this many donuts. The program will fail when not given enough berries.",
         LockMode::LOCK_WHILE_RUNNING,
-        1, 1, 999
+        248, 1, 999
     )
     , GO_HOME_WHEN_DONE(false)
     , NOTIFICATION_DONUT_FOUND(
         "Donut Found",
-        true, true, ImageAttachmentMode::JPG,
+        true, false, ImageAttachmentMode::JPG,
         {"Notifs"}
     )
     , NOTIFICATION_STATUS("Status Update", true, false, std::chrono::seconds(3600))
