@@ -1,0 +1,6 @@
+Checks: '-*,bugprone-forbidden-functions'
+CheckOptions:
+  - key: bugprone-forbidden-functions.ForbiddenFunctions
+    value: 'std::filesystem::path::path'
+  - key: bugprone-forbidden-functions.ForbiddenFunctionsMessage
+    value: 'Direct construction of std::filesystem::path from std::string is banned due to Windows Unicode issues. Use XXXXX instead.'
