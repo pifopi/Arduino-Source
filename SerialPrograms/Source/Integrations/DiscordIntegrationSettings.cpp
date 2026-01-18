@@ -24,14 +24,13 @@ DiscordIntegrationSettingsOption::~DiscordIntegrationSettingsOption(){
 DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
     : ConfigOptionImpl<DiscordIntegrationSettingsOption, GroupOption>(
         "Discord Integration Settings",
-        LockMode::LOCK_WHILE_RUNNING,
-        GroupOption::EnableMode::DEFAULT_DISABLED
+        LockMode::LOCK_WHILE_RUNNING
     )
 //    , m_integration_enabled(integration_enabled)
     , run_on_start(
         "<b>Run Discord Integration on Launch:</b><br>Automatically connect to Discord as soon as the program is launched.",
         LockMode::LOCK_WHILE_RUNNING,
-        false
+        true
     )
     , command_type(
         "<b>Discord Integration Command Type:</b><br>Restart the program for this to take effect.",
@@ -46,7 +45,7 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
         true,
         "<b>Discord Token:</b><br>Enter your Discord bot's token. Keep it safe and don't share it with anyone.",
         LockMode::LOCK_WHILE_RUNNING,
-        "", "0123456789abcdefghijklmnopqrstuvwxyzABCDEGFHIJKLMNOPQRSTUVWXYZ"
+        std::getenv("DISCORD_BOT_TOKEN"), "0123456789abcdefghijklmnopqrstuvwxyzABCDEGFHIJKLMNOPQRSTUVWXYZ"
     )
     , command_prefix(
         false,
@@ -82,6 +81,50 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
     PA_ADD_OPTION(channels);
 
     DiscordIntegrationSettingsOption::on_config_value_changed(this);
+
+    {
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set("Alone#pokemonautomation");
+        channel_casted->channel_id.set("907578334119071775");
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    }
+    {
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set("PA#shiny-bot-logs");
+        channel_casted->tags_text.set("Showcase");
+        channel_casted->allow_commands = false;
+        channel_casted->channel_id.set("898882421129375835");
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    }
+    {
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set("PA#live-hosting");
+        channel_casted->tags_text.set("LiveHost");
+        channel_casted->allow_commands = false;
+        channel_casted->channel_id.set("885388078066307102");
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    }
+    {
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set("SHA#live-hosting");
+        channel_casted->tags_text.set("LiveHost");
+        channel_casted->allow_commands = false;
+        channel_casted->channel_id.set("885388760370520114");
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    }
+    {
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set("PA#tera-join-reports");
+        channel_casted->tags_text.set("Telemetry");
+        channel_casted->allow_commands = false;
+        channel_casted->channel_id.set("1052784581809545327");
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    }
 
     this->add_listener(*this);
 }

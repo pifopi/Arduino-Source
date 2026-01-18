@@ -39,7 +39,7 @@ jobs:
         submodules: 'recursive'
     - uses: actions/checkout@v6
       with:
-        repository: 'PokemonAutomation/CommandLineTests'
+        repository: 'pifopi/CommandLineTests'
         path: 'CommandLineTests'
     - uses: jurplel/install-qt-action@v4
       with:
@@ -73,6 +73,11 @@ jobs:
       run: |
         cd Arduino-Source
         echo https://github.com/${{github.repository}}/commit/${{github.sha}} > SerialPrograms/bin/RelWithDebInfo/version.txt
+        copy controls.txt   SerialPrograms/bin/RelWithDebInfo/controls.txt
+        copy devices.txt    SerialPrograms/bin/RelWithDebInfo/devices.txt
+        copy SWITCH1.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH1.JSON
+        copy SWITCH2.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH2.JSON
+        copy SWITCH3.JSON   SerialPrograms/bin/RelWithDebInfo/SWITCH3.JSON
     - uses: actions/upload-artifact@v6
       if: startsWith(matrix.os, 'windows')
       with:
@@ -82,6 +87,7 @@ jobs:
       if: startsWith(matrix.os, 'windows')
       run: |
         cd Arduino-Source/SerialPrograms/bin
+        $env:DISCORD_BOT_TOKEN = "Value"
         $process = Start-Process -FilePath "./RelWithDebInfo/SerialPrograms.exe" `
                                  -ArgumentList "--command-line-test-mode --command-line-test-folder ../../../CommandLineTests" `
                                  -NoNewWindow -Wait -PassThru
