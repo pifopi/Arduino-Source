@@ -87,6 +87,16 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         cd Arduino-Source
+        # Verify compile_commands.json exists
+        if [ ! -f "SerialPrograms/bin/compile_commands.json" ]; then
+          echo "Error: compile_commands.json not found!"
+          exit 1
+        fi
+        # Verify .clang-tidy exists
+        if [ ! -f ".clang-tidy" ]; then
+          echo "Error: .clang-tidy not found in $(pwd)"
+          exit 1
+        fi
         wget "https://raw.githubusercontent.com/llvm/llvm-project/refs/heads/main/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py"
         python3 run-clang-tidy.py -p=SerialPrograms/bin/
     - name: Run tests
