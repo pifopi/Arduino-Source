@@ -93,6 +93,12 @@ jobs:
       shell: bash
       run: |
         echo https://github.com/${{github.repository}}/commit/${{github.sha}} > ${{env.UPLOAD_FOLDER}}/version.txt
+        cp Arduino-Source/controls.txt  ${{env.UPLOAD_FOLDER}}
+        cp Arduino-Source/devices.txt   ${{env.UPLOAD_FOLDER}}
+        cp Arduino-Source/SWITCH1.JSON  ${{env.UPLOAD_FOLDER}}
+        cp Arduino-Source/SWITCH2.JSON  ${{env.UPLOAD_FOLDER}}
+        cp Arduino-Source/SWITCH3.JSON  ${{env.UPLOAD_FOLDER}}
+
 
     - name: Upload Build
       uses: actions/upload-artifact@v6
@@ -105,13 +111,14 @@ jobs:
       uses: actions/checkout@v6
       if: inputs.run-tests
       with:
-        repository: 'PokemonAutomation/CommandLineTests'
+        repository: 'pifopi/CommandLineTests'
         path: 'CommandLineTests'
 
     - name: Run tests (Windows)
       if: startsWith(inputs.os, 'windows') && inputs.run-tests
       run: |
         cd Arduino-Source/SerialPrograms/bin
+        $env:DISCORD_BOT_TOKEN = "Value"
         $process = Start-Process -FilePath "./RelWithDebInfo/SerialPrograms.exe" `
                                  -ArgumentList "--command-line-test-mode --command-line-test-folder ../../../CommandLineTests" `
                                  -NoNewWindow -Wait -PassThru
