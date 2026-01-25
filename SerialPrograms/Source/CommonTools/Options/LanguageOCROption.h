@@ -42,7 +42,7 @@ private:
 
     std::vector<std::pair<Language, bool>> m_case_list;
     std::map<Language, size_t> m_case_map;
-    const size_t m_default;
+    size_t m_default;
 
     std::atomic<size_t> m_current;
 };
