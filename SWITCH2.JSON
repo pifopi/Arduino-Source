@@ -1,0 +1,30 @@
+﻿{
+    "Audio": {
+        "AudioVisualization": "FREQ_BARS",
+        "InputDevice": "{0.0.1.00000000}.{fd7f7974-73d5-483c-af2d-3b3c49a2079e}",
+        "InputFile": "",
+        "InputFormat": "1 x 96,000 Hz (Interleaved Stereo L/R)",
+        "OutputDevice": "",
+        "Volume": 1.0
+    },
+    "ConsoleType": "switch1",
+    "Controller": {
+        "Interface": "Serial: PABotBase",
+        "Serial: PABotBase": "COM8"
+    },
+    "Overlay": {
+        "Boxes": true,
+        "Images": false,
+        "Log": false,
+        "Stats": true,
+        "Text": true
+    },
+    "Video": {
+        "Camera": "\\\\?\\usb#vid_298f&pid_1996&mi_00#7&2aeecc7b&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global",
+        "Resolution": [
+            1920,
+            1080
+        ],
+        "SourceType": "Camera"
+    }
+}
