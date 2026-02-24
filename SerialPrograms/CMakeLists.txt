@@ -214,7 +214,7 @@ set(RESOURCES_DIR "${PACKAGES_DIR}/Resources")
 if (NOT EXISTS "${PACKAGES_DIR}")
     message(STATUS "Cloning Packages repo at configure time...")
     execute_process(
-        COMMAND git clone --branch master https://github.com/PokemonAutomation/Packages "${PACKAGES_DIR}"
+        COMMAND git clone --branch master https://github.com/pifopi/Packages "${PACKAGES_DIR}"
         WORKING_DIRECTORY "${REPO_ROOT_DIR}"
     )
     add_custom_target(clone_packages DEPENDS "${PACKAGES_DIR}")
