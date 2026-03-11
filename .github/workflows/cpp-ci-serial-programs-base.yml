@@ -133,17 +133,65 @@ jobs:
 
         cat << 'EOF' > query.txt
         set output dump
-        match invocation(
-          isExpansionInFileMatching("SerialPrograms/"),
-          hasDeclaration(cxxConstructorDecl(ofClass(hasName("std::filesystem::path")))),
-          hasArgument(0, hasType(asString("std::string")))
+        match anyOf(
+          invocation(
+            isExpansionInFileMatching("SerialPrograms/"),
+            hasDeclaration(cxxConstructorDecl(ofClass(hasName("std::filesystem::path")))),
+            hasArgument(0, hasType(asString("std::string")))
+          ).bind("path_error"),
+          cxxConstructExpr(
+            isExpansionInFileMatching("SerialPrograms/"),
+            hasDeclaration(cxxConstructorDecl(ofClass(hasName("ImageViewRGB32")))),
+            hasArgument(0, hasType(rValueReferenceType(pointee(hasType(hasName("VideoSnapshot")))))),
+            unless(hasAncestor(functionDecl(isInline())))
+          ).bind("view_error")
         )
         EOF
 
         files=$(jq -r '.[].file' SerialPrograms/bin/compile_commands.json)
-        echo "$files" | xargs --max-args=150 clang-query -p SerialPrograms/bin/ -f query.txt >> output.txt
-        cat output.txt
-        if grep --silent "Match #" output.txt; then
-          echo "::error Forbidden std::filesystem::path construction detected!"
+        echo "$files" | xargs --max-args=50 clang-query -p SerialPrograms/bin/ -f query.txt > clang-query-output.txt 2> clang-query-error.txt || true
+
+        if [ -s clang-query-error.txt ]; then
+          echo "Clang query encountered an error."
+          echo "Check clang-query-error.txt below."
           exit 1
         fi
+
+        FOUND_FORBIDDEN=0
+        if grep -q "Binding for 'path_error'" clang-query-output.txt; then
+          echo "::error title=std::filesystem::path created from std::string. More information https://discord.com/channels/695809740428673034/1462210406616531259/1462567541825339635"
+          FOUND_FORBIDDEN=1
+        fi
+        if grep -q "Binding for 'view_error'" clang-query-output.txt; then
+          echo "::error title=ImageViewRGB32 created from VideoSnapshot&& that is stored. It is a dangling pointer as nothing hold the data anymore"
+          FOUND_FORBIDDEN=1
+        fi
+
+        if [ "$FOUND_FORBIDDEN" -eq 1 ]; then
+          echo "Clang query encountered a banned pattern."
+          echo "Check clang-query-output.txt below."
+          exit 1
+        fi
+
+        echo "Scan completed successfully with no violations."
+
+    - name: Upload compile commands
+      uses: actions/upload-artifact@v7
+      if: inputs.run-clang-query && always()
+      with:
+        name: Compile commands (compiler=${{inputs.compiler}})
+        path: Arduino-Source/SerialPrograms/bin/compile_commands.json
+
+    - name: Upload Clang query output
+      uses: actions/upload-artifact@v7
+      if: inputs.run-clang-query && always()
+      with:
+        name: Clang query output (compiler=${{inputs.compiler}})
+        path: Arduino-Source/clang-query-output.txt
+
+    - name: Upload Clang query error
+      uses: actions/upload-artifact@v7
+      if: inputs.run-clang-query && always()
+      with:
+        name: Clang query error (compiler=${{inputs.compiler}})
+        path: Arduino-Source/clang-query-error.txt
