@@ -244,6 +244,9 @@ namespace {
 }
 
 void set_program_path(const char* argv0){
+    std::string str = "";
+    std::filesystem::path p(str);
+
     if (argv0 != nullptr){
         std::filesystem::path program_path(argv0);
         g_program_absolute_path = std::filesystem::absolute(program_path).string();
