@@ -59,8 +59,8 @@ PABotBase2_OemController::PABotBase2_OemController(
 
     //  Add controller-specific messages.
     connection.message_logger().add_message<pabb2_Message_NS1_OemController_Spi>(
-        "PABB_MSG_REQ_NS1_OEM_CONTROLLER_READ_SPI",
-        PABB_MSG_REQ_NS1_OEM_CONTROLLER_READ_SPI,
+        "PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_READ_SPI",
+        PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_READ_SPI,
         true,
         [](const pabb2_Message_NS1_OemController_Spi* message){
             std::string str;
@@ -72,8 +72,8 @@ PABotBase2_OemController::PABotBase2_OemController(
         }
     );
     connection.message_logger().add_message_min_length<pabb2_Message_NS1_OemController_Spi>(
-        "PABB_MSG_REQ_NS1_OEM_CONTROLLER_WRITE_SPI",
-        PABB_MSG_REQ_NS1_OEM_CONTROLLER_WRITE_SPI,
+        "PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_WRITE_SPI",
+        PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_WRITE_SPI,
         true,
         [](const pabb2_Message_NS1_OemController_Spi* message){
             std::string str;
@@ -296,7 +296,7 @@ void PABotBase2_OemController::run_preconnect_configure(
 
     pabb2_Message_NS1_OemController_Spi request;
     request.message_bytes = sizeof(request) + sizeof(colors);
-    request.opcode = PABB_MSG_REQ_NS1_OEM_CONTROLLER_WRITE_SPI;
+    request.opcode = PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_WRITE_SPI;
     request.controller_type = SerialPABotBase::controller_type_to_id(controller_type);
     request.address = 0x00006050;
     request.bytes = sizeof(PABB_NintendoSwitch_ControllerColors);
@@ -481,7 +481,7 @@ void PABotBase2_OemController::update_status(Cancellable& cancellable){
 
             pabb2_Message_NS1_OemController_Spi message;
             message.message_bytes = sizeof(pabb2_Message_NS1_OemController_Spi);
-            message.opcode = PABB_MSG_REQ_NS1_OEM_CONTROLLER_READ_SPI;
+            message.opcode = PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_READ_SPI;
             message.controller_type = SerialPABotBase::controller_type_to_id(m_controller_type);
             message.address = 0x00006050;
             message.bytes = sizeof(ControllerColors);
@@ -494,7 +494,7 @@ void PABotBase2_OemController::update_status(Cancellable& cancellable){
                 memcpy(&colors, response.data() + sizeof(MessageHeader), sizeof(ControllerColors));
             }else{
                 m_logger.log(
-                    "Invalid response size to PABB_MSG_REQ_NS1_OEM_CONTROLLER_READ_SPI: body = " + std::to_string(response.size()),
+                    "Invalid response size to PABB2_MESSAGE_REQ_NS1_OEM_CONTROLLER_READ_SPI: body = " + std::to_string(response.size()),
                     COLOR_RED
                 );
 //                m_handle.set_status_line1("Error: See log for more information.", COLOR_RED);
