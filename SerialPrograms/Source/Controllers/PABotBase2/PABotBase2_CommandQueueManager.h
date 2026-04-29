@@ -50,14 +50,14 @@ public:
     void wait_for_command_finish(Cancellable* cancellable, uint8_t id);
 
     void send_cancel() noexcept;
-    void send_replace_on_next(Cancellable* cancellable);
+    void send_replace_on_next() noexcept;
 
     uint8_t send_command(Cancellable* cancellable, MessageHeader& command);
     void report_command_finished(const MessageHeader& finished_message);
 
 
 private:
-    bool try_push_pending_cancel() noexcept;
+    bool try_push_pending_specials() noexcept;
 
     virtual void on_cancellable_cancel(
         Cancellable& cancellable,
@@ -77,7 +77,7 @@ private:
     uint8_t m_command_queue_size = 4;
     uint8_t m_command_seqnum = 0;
 
-    bool m_pending_cancel = false;
+    uint8_t m_pending_special = PABB2_MESSAGE_OPCODE_INVALID;
 
     SpinLock m_pending_commands_lock;
     struct CommandHandle{
