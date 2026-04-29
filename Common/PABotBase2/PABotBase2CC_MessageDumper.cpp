@@ -461,7 +461,16 @@ MessageLogger::MessageLogger(){
         }
     );
 
-
+    add_message<MessageHeader>(
+        "PABB2_MESSAGE_OPCODE_CQ_COMMAND_DROPPED",
+        PABB2_MESSAGE_OPCODE_CQ_COMMAND_DROPPED,
+        true,
+        [](const MessageHeader* header){
+            std::string str;
+            str += "id = " + std::to_string(header->id);
+            return str;
+        }
+    );
     add_message<MessageHeader>(
         "PABB2_MESSAGE_OPCODE_CQ_CANCEL",
         PABB2_MESSAGE_OPCODE_CQ_CANCEL,

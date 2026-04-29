@@ -54,8 +54,7 @@ public:
         m_reset_flag = false;
     }
 
-    virtual bool run_events() override;
-    virtual void wait_for_event(WallDuration timeout) override;
+    virtual bool run_events(const WallDuration& timeout) override;
 
 
 public:

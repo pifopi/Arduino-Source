@@ -175,14 +175,21 @@ void DeviceHandle::query_controller_list(){
     m_logger.Logger::log("Checking Controller List... (" + str + ")");
 }
 void DeviceHandle::query_command_queue(){
-    uint8_t command_queue_size = (uint8_t)query_u32(PABB2_MESSAGE_OPCODE_CQ_CAPACITY);
+    uint32_t command_queue_size = query_u32(PABB2_MESSAGE_OPCODE_CQ_CAPACITY);
     m_logger.log("[MLC]: Command Queue Size: " + std::to_string(command_queue_size), COLOR_BLUE);
 
-    //  For now we don't need to use that much queue size.
-    command_queue_size = std::min<uint8_t>(command_queue_size, 64);
+    //  Clip the command queue sizes.
+    command_queue_size = std::max<uint32_t>(command_queue_size, 4);
+    command_queue_size = std::min<uint32_t>(command_queue_size, 255);
+
+    //  Don't let it get too large since we don't need it.
+    command_queue_size = std::min<uint8_t>(
+        command_queue_size,
+        GlobalSettings::instance().COMMAND_QUEUE_LIMIT
+    );
 
     m_logger.Logger::log("Setting queue size to: " + std::to_string(command_queue_size));
-    m_command_queue.set_command_queue_size(command_queue_size);
+    m_command_queue.set_command_queue_size((uint8_t)command_queue_size);
 }
 void DeviceHandle::connect(){
     query_protocol();

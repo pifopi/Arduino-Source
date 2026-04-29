@@ -21,12 +21,7 @@ namespace PokemonAutomation{
 
 class UnreliableStreamConnectionPolling : public UnreliableStreamSender{
 public:
-    virtual size_t unreliable_recv(void* data, size_t max_bytes) = 0;
-
-    //  Wait for something to be ready to receive.
-    virtual void wait_for_recv_available(WallDuration timeout){
-        (void)timeout;
-    }
+    virtual size_t unreliable_recv(void* data, size_t max_bytes, const WallDuration& timeout) noexcept = 0;
 };
 
 
@@ -58,12 +53,7 @@ public:
     virtual bool reset_flag_set() const{ return false; }
     virtual void clear_reset_flag(){}
 
-    //  Wait for the next time to run an event.
-    virtual void wait_for_event(WallDuration timeout){
-        (void)timeout;
-    }
-
-    virtual bool run_events(){
+    virtual bool run_events(const WallDuration& timeout){
         return false;
     }
 };

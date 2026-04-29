@@ -226,6 +226,11 @@ GlobalSettings::GlobalSettings()
     , PERFORMANCE(CONSTRUCT_TOKEN)
     , AUDIO_PIPELINE(CONSTRUCT_TOKEN)
     , VIDEO_PIPELINE(CONSTRUCT_TOKEN)
+    , COMMAND_QUEUE_LIMIT(
+        "<b>Maximum Command Queue Size:</b><br>Do not queue more than this many commands to the controller at once.",
+        LockMode::LOCK_WHILE_RUNNING,
+        64, 4, 255
+    )
     , ENABLE_LIFETIME_SANITIZER0(
         "<b>Enable Lifetime Sanitizer: (for debugging)</b><br>"
         "Check for C++ object lifetime violations. Terminate program with stack dump if violations are found. "
@@ -277,6 +282,7 @@ GlobalSettings::GlobalSettings()
 
     PA_ADD_OPTION(AUDIO_PIPELINE);
     PA_ADD_OPTION(VIDEO_PIPELINE);
+    PA_ADD_OPTION(COMMAND_QUEUE_LIMIT);
 
     PA_ADD_OPTION(ENABLE_LIFETIME_SANITIZER0);
 

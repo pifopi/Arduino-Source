@@ -443,7 +443,7 @@ void PacketSender::commit_uncommitted_send_stream() noexcept{
         PacketHeader* packet = (PacketHeader*)(m_buffer + offset);
 
         //  Send
-//        cout << "Send: " << (int)packet->seqnum << ", Offset: " << packet->stream_offset << endl;
+//        cout << "Send: " << (unsigned)packet->seqnum << ", Bytes: " << (unsigned)packet->packet_bytes << endl;
         m_connection.unreliable_send(
             packet,
             packet->packet_bytes == 0 ? 256 : packet->packet_bytes

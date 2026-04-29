@@ -115,6 +115,7 @@ size_t ReliableStreamConnection::reliable_send_blocking(const void* data, size_t
 }
 bool ReliableStreamConnection::reliable_try_send_all_or_nothing(const void* data, size_t bytes){
     std::unique_lock<Mutex> lg(m_lock);
+//    cout << "slots used = " << (unsigned)m_reliable_sender.slots_used() << endl;
     if (m_reliable_sender.slots_used() >= m_remote_slot_capacity){
         return false;
     }
