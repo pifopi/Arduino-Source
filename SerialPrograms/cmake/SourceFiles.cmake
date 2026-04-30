@@ -1471,6 +1471,8 @@ file(GLOB LIBRARY_SOURCES
     Source/PokemonFRLG/Inference/Menus/PokemonFRLG_PartyMenuDetector.h
     Source/PokemonFRLG/Inference/Menus/PokemonFRLG_TrainerCardDetector.cpp
     Source/PokemonFRLG/Inference/Menus/PokemonFRLG_TrainerCardDetector.h
+    Source/PokemonFRLG/Inference/Menus/PokemonFRLG_DexRegistrationDetector.cpp
+    Source/PokemonFRLG/Inference/Menus/PokemonFRLG_DexRegistrationDetector.h
     Source/PokemonFRLG/Inference/Sounds/PokemonFRLG_ShinySoundDetector.cpp
     Source/PokemonFRLG/Inference/Sounds/PokemonFRLG_ShinySoundDetector.h
     Source/PokemonFRLG/Inference/PokemonFRLG_BattleSelectionArrowDetector.cpp
@@ -1545,6 +1547,8 @@ file(GLOB LIBRARY_SOURCES
     Source/PokemonFRLG/Programs/RngManipulation/PokemonFRLG_StarterRng.h
     Source/PokemonFRLG/Programs/RngManipulation/PokemonFRLG_GiftRng.cpp
     Source/PokemonFRLG/Programs/RngManipulation/PokemonFRLG_GiftRng.h
+    Source/PokemonFRLG/Programs/RngManipulation/PokemonFRLG_StaticRng.cpp
+    Source/PokemonFRLG/Programs/RngManipulation/PokemonFRLG_StaticRng.h
     Source/PokemonFRLG/Programs/TestPrograms/PokemonFRLG_SoundListener.cpp
     Source/PokemonFRLG/Programs/TestPrograms/PokemonFRLG_SoundListener.h
     Source/PokemonFRLG/Programs/TestPrograms/PokemonFRLG_ReadStats.cpp

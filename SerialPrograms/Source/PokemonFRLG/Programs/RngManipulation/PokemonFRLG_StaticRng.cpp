@@ -1,4 +1,4 @@
-/*  Gift RNG
+/*  Static RNG
  *
  *  From: https://github.com/PokemonAutomation/
  *
@@ -15,40 +15,44 @@
 #include "CommonFramework/VideoPipeline/VideoFeed.h"
 #include "CommonTools/Async/InferenceRoutines.h"
 #include "CommonTools/StartupChecks/StartProgramChecks.h"
+#include "CommonTools/VisualDetectors/BlackScreenDetector.h"
 #include "Pokemon/Pokemon_Strings.h"
 #include "NintendoSwitch/Commands/NintendoSwitch_Commands_PushButtons.h"
 #include "NintendoSwitch/NintendoSwitch_Settings.h"
 #include "NintendoSwitch/Programs/NintendoSwitch_GameEntry.h"
+#include "PokemonFRLG/Inference/Dialogs/PokemonFRLG_BattleDialogs.h"
 #include "PokemonFRLG/Inference/Dialogs/PokemonFRLG_PartyDialogs.h"
 #include "PokemonFRLG/Inference/Menus/PokemonFRLG_SummaryDetector.h"
 #include "PokemonFRLG/Inference/Menus/PokemonFRLG_PartyMenuDetector.h"
 #include "PokemonFRLG/Inference/Menus/PokemonFRLG_BagDetector.h"
+#include "PokemonFRLG/Inference/Menus/PokemonFRLG_DexRegistrationDetector.h"
+#include "PokemonFRLG/Inference/Menus/PokemonFRLG_StartMenuDetector.h"
 #include "PokemonFRLG/Inference/PokemonFRLG_PartyLevelUpReader.h"
 #include "PokemonFRLG/Inference/PokemonFRLG_StatsReader.h"
 #include "PokemonFRLG/PokemonFRLG_Navigation.h"
 #include "PokemonFRLG_BlindNavigation.h"
 #include "PokemonFRLG_RngNavigation.h"
 #include "PokemonFRLG_HardReset.h"
-#include "PokemonFRLG_GiftRng.h"
+#include "PokemonFRLG_StaticRng.h"
 
 namespace PokemonAutomation{
 namespace NintendoSwitch{
 namespace PokemonFRLG{
 
 
-GiftRng_Descriptor::GiftRng_Descriptor()
+StaticRng_Descriptor::StaticRng_Descriptor()
     : SingleSwitchProgramDescriptor(
-        "PokemonFRLG:GiftRng",
-        Pokemon::STRING_POKEMON + " FRLG", "Gift RNG",
-        "Programs/PokemonFRLG/GiftRng.html",
-        "Automatically calibrate timings to hit a specific RNG target for FRLG gift " + STRING_POKEMON,
+        "PokemonFRLG:StaticRng",
+        Pokemon::STRING_POKEMON + " FRLG", "Static RNG",
+        "Programs/PokemonFRLG/StaticRng.html",
+        "Automatically calibrate timings to hit a specific RNG target for FRLG static encounters.",
         ProgramControllerClass::StandardController_RequiresPrecision,
         FeedbackType::REQUIRED,
         AllowCommandsWhenRunning::DISABLE_COMMANDS
     )
 {}
 
-struct GiftRng_Descriptor::Stats : public StatsTracker{
+struct StaticRng_Descriptor::Stats : public StatsTracker{
     Stats()
         : resets(m_stats["Resets"])
         , shinies(m_stats["Shinies"])
@@ -65,11 +69,11 @@ struct GiftRng_Descriptor::Stats : public StatsTracker{
     std::atomic<uint64_t>& nonshiny;
     std::atomic<uint64_t>& errors;
 };
-std::unique_ptr<StatsTracker> GiftRng_Descriptor::make_stats() const{
+std::unique_ptr<StatsTracker> StaticRng_Descriptor::make_stats() const{
     return std::unique_ptr<StatsTracker>(new Stats());
 }
 
-GiftRng::GiftRng()
+StaticRng::StaticRng()
     : LANGUAGE(
         "<b>Game Language:</b>",
         {
@@ -86,24 +90,20 @@ GiftRng::GiftRng()
     , TARGET(
         "<b>Target:</b><br>",
         {
-            {PokemonFRLG_RngTarget::magikarp, "magikarp", "Magikarp"},
-            {PokemonFRLG_RngTarget::hitmonchan, "hitmonchan", "Hitmonchan"},
-            {PokemonFRLG_RngTarget::hitmonlee, "hitmonlee", "Hitmonlee"},
-            {PokemonFRLG_RngTarget::eevee, "eevee", "Eevee"},
-            {PokemonFRLG_RngTarget::lapras, "lapras", "Lapras"},
-            {PokemonFRLG_RngTarget::omanyte, "omanyte", "Omanyte"},
-            {PokemonFRLG_RngTarget::kabuto, "kabuto", "Kabuto"},
-            {PokemonFRLG_RngTarget::aerodactyl, "aerodactyl", "Aerodactyl"},
-            {PokemonFRLG_RngTarget::gamecornerabra, "gamecornerabra", "Game Corner Abra"},
-            {PokemonFRLG_RngTarget::gamecornerclefairy, "gamecornerclefairy", "Game Corner Clefairy"},
-            {PokemonFRLG_RngTarget::gamecornerdratini, "gamecornerdratini", "Game Corner Dratini"},
-            {PokemonFRLG_RngTarget::gamecornerscyther, "gamecornerscyther", "Game Corner Scyther"},
-            {PokemonFRLG_RngTarget::gamecornerpinsir, "gamecornerpinsir", "Game Corner Pinsir"},
-            {PokemonFRLG_RngTarget::gamecornerporygon, "gamecornerporygon", "Game Corner Porygon"},
-            {PokemonFRLG_RngTarget::togepi, "togepi", "Togepi"},
+            {PokemonFRLG_RngTarget::electrode, "electrode", "Electrode"},
+            {PokemonFRLG_RngTarget::snorlax, "snorlax", "Snorlax"},
+            {PokemonFRLG_RngTarget::articuno, "articuno", "Articuno"},
+            {PokemonFRLG_RngTarget::zapdos, "zapdos", "Zapdos"},
+            {PokemonFRLG_RngTarget::moltres, "moltres", "Moltres"},
+            {PokemonFRLG_RngTarget::mewtwo, "mewtwo", "Mewtwo"},
+            {PokemonFRLG_RngTarget::hypno, "hypno", "Hypno"},
+            {PokemonFRLG_RngTarget::hooh, "hooh", "Ho-oh"},
+            {PokemonFRLG_RngTarget::lugia, "lugia", "Lugia"},
+            {PokemonFRLG_RngTarget::deoxys_attack, "deoxys_attack", "Deoxys-Attack"},
+            {PokemonFRLG_RngTarget::deoxys_defense, "deoxys_defense", "Deoxys-Defense"}
         },
         LockMode::LOCK_WHILE_RUNNING,
-        PokemonFRLG_RngTarget::magikarp
+        PokemonFRLG_RngTarget::electrode
     )    
     , MAX_RESETS(
         "<b>Max Resets:</b><br>",
@@ -116,6 +116,13 @@ GiftRng::GiftRng()
         "Rare candies used during calibration will be restored after resetting.",
         LockMode::UNLOCK_WHILE_RUNNING,
         0, 0, 999 // default, min, max
+    )
+    , MAX_BALL_THROWS(
+        "<b>Max Balls Thrown:</b><br>"
+        "The number of " + STRING_POKEBALL + "s in your bag to attempt to throw. Make sure these are at the top position of the bag.<br>"
+        "Balls thrown during calibration will be restored after resetting.",
+        LockMode::UNLOCK_WHILE_RUNNING,
+        20, 1, 999 // default, min, max
     )
     , SEED(
         false,
@@ -156,7 +163,7 @@ GiftRng::GiftRng()
     , SEED_DELAY(
         "<b>Seed Delay Time (ms):</b><br>The delay between starting the game and advancing past the title screen. Set this to match your target seed.",
         LockMode::LOCK_WHILE_RUNNING,
-        31338, 30470 // default, min
+        31338, 28000 // default, min
     )
     , ADVANCES(
         "<b>Advances:</b><br>The total number of RNG advances for your target.<br>This should be the combined amount of continue screen and in-game advances.",
@@ -205,6 +212,7 @@ GiftRng::GiftRng()
     PA_ADD_OPTION(LANGUAGE);
     PA_ADD_OPTION(TARGET);
     PA_ADD_OPTION(MAX_RESETS);
+    PA_ADD_OPTION(MAX_BALL_THROWS);
     PA_ADD_OPTION(MAX_RARE_CANDIES);
     PA_ADD_OPTION(SEED);
     PA_ADD_OPTION(SEED_LIST);
@@ -222,12 +230,149 @@ GiftRng::GiftRng()
 
 
 
-bool GiftRng::have_hit_target(SingleSwitchProgramEnvironment& env, const uint32_t& TARGET_SEED, const AdvRngState& hit){
+bool StaticRng::have_hit_target(SingleSwitchProgramEnvironment& env, const uint32_t& TARGET_SEED, const AdvRngState& hit){
     return (hit.seed == TARGET_SEED) && (hit.advance == ADVANCES);
 }
 
-AdvObservedPokemon GiftRng::read_summary(SingleSwitchProgramEnvironment& env, ProControllerContext& context){
-    // assumes we're already on the first summary page
+bool StaticRng::auto_catch(SingleSwitchProgramEnvironment& env, ProControllerContext& context, const uint64_t& MAX_BALL_THROWS){
+    for (uint64_t i=0; i<MAX_BALL_THROWS; i++){
+        int count = 0;
+        while(true){
+            if (count >= 10){
+                return false;
+            }
+            count++;
+
+            BattleMenuWatcher battle_menu(COLOR_RED);
+            PartyMenuWatcher party_menu(COLOR_RED);
+            DexRegistrationWatcher dex_registration(COLOR_RED);
+            BlackScreenWatcher black_screen(COLOR_RED);
+            context.wait_for_all_requests();
+            int ret = run_until<ProControllerContext>(
+                env.console, context,
+                [](ProControllerContext& context) {
+                    for (int i=0; i<60; i++){
+                        pbf_press_button(context, BUTTON_B, 200ms, 300ms);
+                    }
+                },
+                { battle_menu, party_menu, black_screen },
+                10ms
+            );
+
+            int start_ret;
+            switch (ret){
+            case 0:
+                env.log("Battle menu detected");
+                break;
+            case 1:
+                env.log("Party menu detected. Attempting to send out next Pokemon");
+                pbf_move_left_joystick(context, {0, -1}, 200ms, 300ms);
+                pbf_mash_button(context, BUTTON_A, 1000ms);
+                continue;
+            case 2:
+                env.log("Dex registration detected. Exiting battle...");
+                pbf_mash_button(context, BUTTON_B, 5000ms);
+                return false;
+            case 3:
+                env.log("Black screen detected. Battle exited.");
+                return false;
+            default:
+                env.log("No recognized state. Try checking if in the overworld...");
+                StartMenuWatcher start_menu;
+                context.wait_for_all_requests();
+                start_ret = run_until<ProControllerContext>(
+                    env.console, context,
+                    [](ProControllerContext& context) {
+                        for (int i=0; i<3; i++){
+                            pbf_press_button(context, BUTTON_PLUS, 200ms, 2800ms);
+                            pbf_mash_button(context, BUTTON_B, 500ms);
+                        }
+                    },
+                    { start_menu }
+                );
+                if (start_ret < 0){
+                    send_program_recoverable_error_notification(
+                        env, NOTIFICATION_ERROR_RECOVERABLE,
+                        "auto_catch(): no recognized state after 30 seconds."
+                    ); 
+                    return true;
+                }
+                env.log("Overworld detected.");
+                pbf_mash_button(context, BUTTON_B, 500ms);
+                context.wait_for_all_requests();
+                return false;
+            }
+
+            break;
+        }
+
+        // select BAG (selection arrow does not wrap around)
+        pbf_move_left_joystick(context, {+1, 0}, 100ms, 150ms);
+        pbf_move_left_joystick(context, {0, +1}, 100ms, 150ms);
+        pbf_move_left_joystick(context, {+1, 0}, 100ms, 150ms);
+        pbf_move_left_joystick(context, {0, +1}, 100ms, 150ms);
+
+        BagWatcher bag_open(COLOR_RED);
+        int ret2 = run_until<ProControllerContext>(
+            env.console, context,
+            [](ProControllerContext& context) {
+                for (int i=0; i<5; i++){
+                    pbf_press_button(context, BUTTON_A, 200ms, 1800ms);
+                }
+            },
+            { bag_open }
+        );
+        if (ret2 < 0){
+            send_program_recoverable_error_notification(
+                env, NOTIFICATION_ERROR_RECOVERABLE,
+                "auto_catch(): failed to open bag."
+            ); 
+            return true;
+        }
+
+        if (i == 0){
+            // go to balls pocket (pockets do not wrap around, topmost item will already be selected)
+            pbf_move_left_joystick(context, {+1, 0}, 200ms, 800ms);
+            pbf_move_left_joystick(context, {+1, 0}, 200ms, 800ms);
+            pbf_move_left_joystick(context, {+1, 0}, 200ms, 800ms);
+        }
+
+        // use ball
+        pbf_mash_button(context, BUTTON_A, 5s);
+    }
+
+    env.log("auto_catch(): ran out of balls.");
+    return true;
+}
+
+AdvObservedPokemon StaticRng::read_summary(SingleSwitchProgramEnvironment& env, ProControllerContext& context){
+    // navigate to the summary page of the last occupied (not necessarily 6th) party slot
+    open_party_menu_from_overworld(env.console, context);
+    pbf_move_left_joystick(context, {0, +1}, 200ms, 300ms);
+    pbf_move_left_joystick(context, {0, +1}, 200ms, 300ms);
+
+    SummaryWatcher page_one(COLOR_RED);
+    context.wait_for_all_requests();
+    int ret = run_until<ProControllerContext>(
+        env.console, context,
+        [](ProControllerContext& context) {
+            pbf_press_button(context, BUTTON_A, 200ms, 300ms);
+            for (int i=0; i<5; i++){
+                pbf_press_button(context, BUTTON_A, 200ms, 3800ms);
+            }
+        },
+        { page_one }
+    );
+
+    if (ret < 0){
+        OperationFailedException::fire(
+            ErrorReport::SEND_ERROR_REPORT,
+            "read_summary(): Failed to detect first summary screen.",
+            env.console
+        ); 
+    }
+
+    // read stats
     PokemonFRLG_Stats stats;
     StatsReader reader(COLOR_RED);
 
@@ -237,7 +382,7 @@ AdvObservedPokemon GiftRng::read_summary(SingleSwitchProgramEnvironment& env, Pr
 
     SummaryPage2Watcher page_two(COLOR_RED);
     context.wait_for_all_requests();
-    int ret = run_until<ProControllerContext>(
+    int ret2 = run_until<ProControllerContext>(
         env.console, context,
         [](ProControllerContext& context) {
             for (int i=0; i<5; i++){
@@ -247,7 +392,7 @@ AdvObservedPokemon GiftRng::read_summary(SingleSwitchProgramEnvironment& env, Pr
         { page_two }
     );
 
-    if (ret < 0){
+    if (ret2 < 0){
         OperationFailedException::fire(
             ErrorReport::SEND_ERROR_REPORT,
             "read_summary(): Failed to detect second summary screen.",
@@ -294,7 +439,7 @@ AdvObservedPokemon GiftRng::read_summary(SingleSwitchProgramEnvironment& env, Pr
     return pokemon;
 }
 
-bool GiftRng::use_rare_candy(
+bool StaticRng::use_rare_candy(
     SingleSwitchProgramEnvironment& env, 
     ProControllerContext& context,
     AdvObservedPokemon& pokemon,
@@ -306,6 +451,7 @@ bool GiftRng::use_rare_candy(
     if (first){
         open_bag_from_overworld(env.console, context);
         // move left to the correct pocket (in case Teachy TV was used)
+        pbf_move_left_joystick(context, {-1, 0}, 200ms, 800ms);
         pbf_move_left_joystick(context, {-1, 0}, 200ms, 800ms);
         pbf_move_left_joystick(context, {-1, 0}, 200ms, 800ms);
     }
@@ -413,12 +559,12 @@ bool GiftRng::use_rare_candy(
 }
 
 
-void GiftRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext& context){
+void StaticRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext& context){
     /*
     * Settings: Text Speed fast
     */
 
-    GiftRng_Descriptor::Stats& stats = env.current_stats<GiftRng_Descriptor::Stats>();
+    StaticRng_Descriptor::Stats& stats = env.current_stats<StaticRng_Descriptor::Stats>();
 
     home_black_border_check(env.console, context);
 
@@ -432,7 +578,7 @@ void GiftRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext&
     if (SEED_POSITION == -1){
         OperationFailedException::fire(
             ErrorReport::SEND_ERROR_REPORT,
-            "GiftRng(): Target Seed is missing from the list of nearby seeds.",
+            "StaticRng(): Target Seed is missing from the list of nearby seeds.",
             env.console
         ); 
     }
@@ -442,66 +588,50 @@ void GiftRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext&
     BaseStats BASE_STATS;
     int16_t GENDER_THRESHOLD = -1;
     switch (TARGET){
-    case PokemonFRLG_RngTarget::magikarp:
-        BASE_STATS = { 20, 10, 55, 15, 20, 80 };
-        GENDER_THRESHOLD = 126;
-        break;
-    case PokemonFRLG_RngTarget::hitmonchan:
-        BASE_STATS = { 50, 105, 79, 35, 110, 76 };
+    case PokemonFRLG_RngTarget::electrode:
+        BASE_STATS = { 60, 50, 70, 80, 80, 140 };
         GENDER_THRESHOLD = -1;
         break;
-    case PokemonFRLG_RngTarget::hitmonlee:
-        BASE_STATS = { 50, 120, 53, 35, 110, 87 };
+    case PokemonFRLG_RngTarget::snorlax:
+        BASE_STATS = { 160, 110, 65, 65, 110, 30 };
+        GENDER_THRESHOLD = 30;
+        break;
+    case PokemonFRLG_RngTarget::articuno:
+        BASE_STATS = { 90, 85, 100, 95, 125, 85 };
         GENDER_THRESHOLD = -1;
         break;
-    case PokemonFRLG_RngTarget::eevee:
-        BASE_STATS = { 55, 55, 50, 45, 65, 55 };
-        GENDER_THRESHOLD = 30;
-        break;
-    case PokemonFRLG_RngTarget::lapras:
-        BASE_STATS = { 130, 85, 80, 85, 95, 60 };
-        GENDER_THRESHOLD = 126;
-        break;
-    case PokemonFRLG_RngTarget::omanyte:
-        BASE_STATS = { 35, 40, 100, 90, 55, 35 };
-        GENDER_THRESHOLD = 30;
-        break;
-    case PokemonFRLG_RngTarget::kabuto:
-        BASE_STATS = { 30, 80, 90, 55, 45, 55 };
-        GENDER_THRESHOLD = 30;
-        break;
-    case PokemonFRLG_RngTarget::aerodactyl:
-        BASE_STATS = { 80, 105, 65, 60, 75, 130 };
-        GENDER_THRESHOLD = 30;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerabra:
-        BASE_STATS = { 25, 20, 15, 105, 55, 90 };
-        GENDER_THRESHOLD = 63;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerclefairy:
-        BASE_STATS = { 70, 45, 48, 60, 65, 35 };
-        GENDER_THRESHOLD = 190;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerdratini:
-        BASE_STATS = { 41, 64, 45, 50, 50, 50 };
-        GENDER_THRESHOLD = 126;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerscyther:
-        BASE_STATS = { 70, 110, 80, 55, 80, 105 };
-        GENDER_THRESHOLD = 126;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerpinsir:
-        BASE_STATS = { 65, 125, 100, 55, 70, 85 };
-        GENDER_THRESHOLD = 126;
-        break;
-    case PokemonFRLG_RngTarget::gamecornerporygon:
-        BASE_STATS = { 65, 60, 70, 85, 75, 40 };
+    case PokemonFRLG_RngTarget::zapdos:
+        BASE_STATS = { 90, 90, 85, 125, 90, 100 };
         GENDER_THRESHOLD = -1;
         break;
-    case PokemonFRLG_RngTarget::togepi:
-        BASE_STATS = { 35, 20, 65, 40, 65, 20 };
-        GENDER_THRESHOLD = 30;
-        break; 
+    case PokemonFRLG_RngTarget::moltres:
+        BASE_STATS = { 90, 100, 90, 125, 85, 90 };
+        GENDER_THRESHOLD = -1;
+        break;
+    case PokemonFRLG_RngTarget::mewtwo:
+        BASE_STATS = { 106, 110, 90, 154, 90, 130 };
+        GENDER_THRESHOLD = -1;
+        break;
+    case PokemonFRLG_RngTarget::hypno:
+        BASE_STATS = { 85, 73, 70, 73, 115, 67 };
+        GENDER_THRESHOLD = 126;
+        break;
+    case PokemonFRLG_RngTarget::hooh:
+        BASE_STATS = { 106, 130, 90, 110, 154, 90 };
+        GENDER_THRESHOLD = -1;
+        break;
+    case PokemonFRLG_RngTarget::lugia:
+        BASE_STATS = { 106, 90, 130, 90, 154, 110 };
+        GENDER_THRESHOLD = -1;
+        break;
+    case PokemonFRLG_RngTarget::deoxys_attack:
+        BASE_STATS = { 50, 180, 20, 180, 20, 150 };
+        GENDER_THRESHOLD = -1;
+        break;
+    case PokemonFRLG_RngTarget::deoxys_defense:
+        BASE_STATS = { 50, 70, 160, 70, 160, 90 };
+        GENDER_THRESHOLD = -1;
+        break;
     default:
         break;
     }
@@ -657,6 +787,13 @@ void GiftRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext&
             break;
         }
 
+        bool failed = auto_catch(env, context, MAX_BALL_THROWS);
+        if (failed){
+            env.log("Failed catch.");
+            stats.errors++;
+            continue;
+        }
+
         AdvObservedPokemon pokemon = read_summary(env, context);
         AdvRngFilters filters = observation_to_filters(pokemon, BASE_STATS);
         RNG_FILTERS.set(filters);
@@ -675,7 +812,7 @@ void GiftRng::program(SingleSwitchProgramEnvironment& env, ProControllerContext&
         }
 
         for (uint64_t i=0; i<MAX_RARE_CANDIES; i++){
-            bool failed = use_rare_candy(env, context, pokemon, filters, BASE_STATS, i == 0);
+            failed = use_rare_candy(env, context, pokemon, filters, BASE_STATS, i == 0);
             if (failed){
                 stats.errors++;
             }
