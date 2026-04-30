@@ -18,6 +18,7 @@
 
 #ifdef PABB2_ENABLE
 #include "PabbTime.h"
+#include "Tools/ResetListener.h"
 #else
 #include "Common/Cpp/Time.h"
 #endif
@@ -27,7 +28,12 @@ namespace PABotBase2{
 
 
 
-class ReliableStreamConnectionFW final : public ReliableStreamConnectionPolling{
+class ReliableStreamConnectionFW final
+    : public ReliableStreamConnectionPolling
+#ifdef PABB2_ENABLE
+    , public ResetRunner
+#endif
+{
 public:
     ReliableStreamConnectionFW(UnreliableStreamConnectionPolling& unreliable_connection);
 
@@ -47,14 +53,8 @@ public:
         return m_stream_coalescer.read(data, bytes);
     }
 
-    virtual bool reset_flag_set() const override{
-        return m_reset_flag;
-    }
-    virtual void clear_reset_flag() override{
-        m_reset_flag = false;
-    }
-
-    virtual bool run_events(const WallDuration& timeout) override;
+    virtual bool run_send_events(const WallDuration& timeout) override;
+    virtual bool run_recv_events(const WallDuration& timeout) override;
 
 
 public:
@@ -86,7 +86,6 @@ public:
 
 private:
     void send_oob_info_label_i32(uint8_t opcode, const char* str, uint32_t data);
-    bool iterate_retransmits();
 
 
 private:
@@ -100,8 +99,6 @@ private:
     size_t m_packets_received = 0;
 
     bool m_send_is_currently_full = false;
-
-    bool m_reset_flag = false;
 
     //  Don't allow any stream traffic until CC is ready.
     //  The MLC layer will get stuck in a bad state if we end up between packets.

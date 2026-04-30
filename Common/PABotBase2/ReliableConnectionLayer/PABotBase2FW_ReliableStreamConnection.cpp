@@ -83,7 +83,7 @@ void ReliableStreamConnectionFW::send_oob_info_label_i32(uint8_t opcode, const c
 
 
 
-bool ReliableStreamConnectionFW::iterate_retransmits(){
+bool ReliableStreamConnectionFW::run_send_events(const WallDuration& timeout){
     constexpr WallDuration POLL_RATE = milliseconds_to_duration(PABB2_ReliableConnectionFW_POLL_MS);
 
     WallClock now = current_time();
@@ -95,17 +95,17 @@ bool ReliableStreamConnectionFW::iterate_retransmits(){
     m_last_retransmit = now;
     return m_reliable_sender.iterate_retransmits();
 }
-bool ReliableStreamConnectionFW::run_events(const WallDuration& timeout){
+bool ReliableStreamConnectionFW::run_recv_events(const WallDuration& timeout){
     //  If we have unacked sends, we cap the wait time since those may need to
     //  be retransmitted.
     static constexpr WallDuration POLL_RATE = milliseconds_to_duration(PABB2_ReliableConnectionFW_POLL_MS);
-    const WallDuration* adjusted_timeout = m_reliable_sender.slots_used() != 0 && timeout > POLL_RATE
-        ? &POLL_RATE
-        : &timeout;
+    const WallDuration& adjusted_timeout = m_reliable_sender.slots_used() != 0 && timeout > POLL_RATE
+        ? POLL_RATE
+        : timeout;
 
-    const PacketHeader* packet = m_parser.pull_bytes(m_unreliable_connection, *adjusted_timeout);
+    const PacketHeader* packet = m_parser.pull_bytes(m_unreliable_connection, adjusted_timeout);
     if (packet == nullptr){
-        return iterate_retransmits();
+        return false;
     }
 
     m_packets_received++;
@@ -149,7 +149,9 @@ bool ReliableStreamConnectionFW::run_events(const WallDuration& timeout){
         m_parser.reset();
         m_stream_coalescer.reset();
         m_stream_coalescer.push_packet(0);
-        m_reset_flag = true;
+#ifdef PABB2_ENABLE
+        issue_reset_to_all();
+#endif
         m_stream_ready = false;
         return true;
     case PABB2_CONNECTION_OPCODE_ASK_VERSION:

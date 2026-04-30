@@ -229,7 +229,8 @@ size_t MockDevice::verify_stream_data(){
 void MockDevice::device_thread(){
     std::unique_lock<Mutex> lg(m_device_lock);
     while (!m_stopping.load(std::memory_order_relaxed)){
-        m_connection.run_events(Milliseconds(0));
+        m_connection.run_send_events(Milliseconds(0));
+        m_connection.run_recv_events(Milliseconds(0));
         m_device_cv.wait_for(lg, Milliseconds(10));
     }
 }

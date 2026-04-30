@@ -227,7 +227,9 @@ GlobalSettings::GlobalSettings()
     , AUDIO_PIPELINE(CONSTRUCT_TOKEN)
     , VIDEO_PIPELINE(CONSTRUCT_TOKEN)
     , COMMAND_QUEUE_LIMIT(
-        "<b>Maximum Command Queue Size:</b><br>Do not queue more than this many commands to the controller at once.",
+        "<b>Maximum Command Queue Size:</b><br>"
+        "Do not queue more than this many commands to the controller at once. "
+        "Larger values will tolerate longer connection interrupts, but may increase cancellation latency after a burst of commands.",
         LockMode::LOCK_WHILE_RUNNING,
         64, 4, 255
     )

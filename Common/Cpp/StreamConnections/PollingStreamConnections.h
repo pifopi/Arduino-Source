@@ -53,7 +53,10 @@ public:
     virtual bool reset_flag_set() const{ return false; }
     virtual void clear_reset_flag(){}
 
-    virtual bool run_events(const WallDuration& timeout){
+    virtual bool run_send_events(const WallDuration& timeout){
+        return false;
+    }
+    virtual bool run_recv_events(const WallDuration& timeout){
         return false;
     }
 };
