@@ -92,6 +92,20 @@ bool DeviceHandle::cancel(std::exception_ptr exception) noexcept{
 }
 
 
+std::string DeviceHandle::dump_pending_requests() const{
+    std::string ret = "Pending Requests:\n";
+    std::lock_guard<Mutex> lg(m_lock);
+    for (const auto& item : m_pending_requests){
+        ret += std::to_string(item.first);
+        ret += " : ";
+        ret += tostr_hexbytes(item.second.data(), item.second.size());
+        ret += "\n";
+    }
+    return ret;
+}
+
+
+
 
 void DeviceHandle::throw_incompatible_protocol(){
     m_logger.log(
@@ -196,7 +210,7 @@ void DeviceHandle::set_logging_flag(uint32_t flag){
     message.message_bytes = sizeof(message);
     message.opcode = PABB2_MESSAGE_OPCODE_SET_LOGGING_FLAG;
     message.data = flag;
-    send_request_with_response(message);
+    send_request_with_no_response(message);
 }
 void DeviceHandle::connect(){
     query_protocol();
@@ -243,7 +257,15 @@ void DeviceHandle::send_request_with_no_response(MessageHeader& request){
     request.id = 0;
     std::unique_lock<Mutex> lg(m_lock);
     m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &request);
-    m_connection.reliable_send_blocking(&request, request.message_bytes);
+    m_connection.reliable_send_all_or_nothing(&request, request.message_bytes, WallDuration::max());
+}
+std::optional<uint8_t> DeviceHandle::try_send_request_with_no_response(
+    MessageHeader& request, WallDuration timeout
+) noexcept{
+    request.id = 0;
+    std::unique_lock<Mutex> lg(m_lock);
+    m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &request);
+    return m_connection.reliable_send_all_or_nothing(&request, request.message_bytes, timeout);
 }
 uint8_t DeviceHandle::send_request_with_response(MessageHeader& request){
     std::unique_lock<Mutex> lg(m_lock);
@@ -267,7 +289,7 @@ uint8_t DeviceHandle::send_request_with_response(MessageHeader& request){
     m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &request);
 
     try{
-        m_connection.reliable_send_blocking(&request, request.message_bytes);
+        m_connection.reliable_send_all_or_nothing(&request, request.message_bytes, WallDuration::max());
     }catch (...){
         m_pending_requests.erase(request.id);
         m_request_seqnum--;
@@ -304,14 +326,15 @@ std::optional<uint8_t> DeviceHandle::try_send_request_with_response(
     m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &request);
 
     try{
-        m_connection.reliable_send_blocking(&request, request.message_bytes, timeout);
+        if (m_connection.reliable_send_all_or_nothing(&request, request.message_bytes, timeout)){
+            return request.id;
+        }
     }catch (...){
         m_pending_requests.erase(request.id);
         m_request_seqnum--;
-        return {};
     }
 
-    return request.id;
+    return {};
 }
 std::string DeviceHandle::wait_for_request_response(uint8_t id, WallDuration timeout){
     WallClock deadline = timeout == WallDuration::max()

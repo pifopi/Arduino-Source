@@ -118,7 +118,7 @@ uint8_t CommandQueueManager::send_command(Cancellable* cancellable, MessageHeade
 
             bool sent;
             try{
-                sent = m_connection.reliable_try_send_all_or_nothing(&command, command.message_bytes);
+                sent = m_connection.reliable_send_all_or_nothing(&command, command.message_bytes, WallDuration::max());
             }catch (...){
                 m_pending_commands.erase(iter);
                 throw;
@@ -170,7 +170,7 @@ bool CommandQueueManager::try_push_pending_specials() noexcept{
     message.opcode = m_pending_special;
     message.id = 0;
     try{
-        if (m_connection.reliable_try_send_all_or_nothing(&message, message.message_bytes)){
+        if (m_connection.reliable_send_all_or_nothing(&message, message.message_bytes, WallDuration::zero())){
             m_pending_special = PABB2_MESSAGE_OPCODE_INVALID;
             m_pending_commands.clear();
             m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &message);

@@ -81,6 +81,10 @@ public:
     ControllerType refresh_controller_type();
 
     void send_request_with_no_response(MessageHeader& request);
+    std::optional<uint8_t> try_send_request_with_no_response(
+        MessageHeader& request, WallDuration timeout
+    ) noexcept;
+
     uint8_t send_request_with_response(MessageHeader& request);
     std::optional<uint8_t> try_send_request_with_response(
         MessageHeader& request, WallDuration timeout
@@ -112,6 +116,9 @@ public:
     }
 
 
+public:
+    std::string dump_pending_requests() const;
+
 
 private:
     uint32_t query_u32(uint8_t opcode);
@@ -142,7 +149,7 @@ private:
     uint8_t m_request_seqnum = 0;
     bool m_stream_corrupted = false;
 
-    Mutex m_lock;
+    mutable Mutex m_lock;
     ConditionVariable m_cv;
     std::map<uint8_t, std::string> m_pending_requests;
 

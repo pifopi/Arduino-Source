@@ -93,33 +93,25 @@ bool ReliableStreamConnection::wait_for_pending(WallDuration timeout){
 //  StreamSender/StreamListener
 //
 
-size_t ReliableStreamConnection::reliable_send_blocking(const void* data, size_t bytes, WallDuration timeout){
+bool ReliableStreamConnection::reliable_send_all_or_nothing(const void* data, size_t bytes, WallDuration timeout){
     WallClock deadline = timeout == WallDuration::max()
         ? WallClock::max()
         : current_time() + timeout;
 
     const char* ptr = (const char*)data;
     std::unique_lock<Mutex> lg(m_lock);
-    while (current_time() < deadline){
+    do{
         throw_if_cancelled();
         if (m_reliable_sender.slots_used() >= m_remote_slot_capacity){
             m_cv.wait_until(lg, deadline);
             continue;
         }
         if (m_reliable_sender.send_stream_all_or_nothing(ptr, bytes)){
-            return bytes;
+            return true;
         }
         m_cv.wait_until(lg, deadline);
-    }
-    return 0;
-}
-bool ReliableStreamConnection::reliable_try_send_all_or_nothing(const void* data, size_t bytes){
-    std::unique_lock<Mutex> lg(m_lock);
-//    cout << "slots used = " << (unsigned)m_reliable_sender.slots_used() << endl;
-    if (m_reliable_sender.slots_used() >= m_remote_slot_capacity){
-        return false;
-    }
-    return m_reliable_sender.send_stream_all_or_nothing(data, bytes);
+    }while (current_time() < deadline);
+    return false;
 }
 void ReliableStreamConnection::on_recv(const void* data, size_t bytes){
 #if 0
