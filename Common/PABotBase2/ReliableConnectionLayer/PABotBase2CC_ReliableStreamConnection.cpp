@@ -93,7 +93,10 @@ bool ReliableStreamConnection::wait_for_pending(WallDuration timeout){
 //  StreamSender/StreamListener
 //
 
-bool ReliableStreamConnection::reliable_send_all_or_nothing(const void* data, size_t bytes, WallDuration timeout){
+bool ReliableStreamConnection::reliable_send_all_or_nothing(
+    const void* data, size_t bytes,
+    WallDuration timeout
+) noexcept{
     WallClock deadline = timeout == WallDuration::max()
         ? WallClock::max()
         : current_time() + timeout;

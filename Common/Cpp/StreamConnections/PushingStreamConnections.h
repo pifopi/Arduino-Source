@@ -44,7 +44,7 @@ public:
     virtual bool reliable_send_all_or_nothing(
         const void* data, size_t bytes,
         WallDuration timeout
-    ) = 0;
+    ) noexcept = 0;
 
 protected:
     void on_reliable_recv(const void* data, size_t bytes){
