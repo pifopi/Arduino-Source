@@ -243,7 +243,7 @@ void PABotBase2_OemController::run_preconnect_configure(
         request.message_bytes = sizeof(request);
         request.opcode = PABB2_MESSAGE_OPCODE_CONTROLLER_MAC_ADDRESS;
         request.data = SerialPABotBase::controller_type_to_id(controller_type);
-        uint8_t id = connection.device().send_request(request);
+        uint8_t id = connection.device().send_request_with_response(request);
         std::string response = connection.device().wait_for_request_response(id, std::chrono::milliseconds(100));
         if (response.size() == sizeof(MessageHeader) + sizeof(controller_mac_address)){
             memcpy(
@@ -486,7 +486,7 @@ void PABotBase2_OemController::update_status(Cancellable& cancellable){
             message.address = 0x00006050;
             message.bytes = sizeof(ControllerColors);
 
-            uint8_t id = m_connection.device().send_request(message);
+            uint8_t id = m_connection.device().send_request_with_response(message);
             std::string response = m_connection.device().wait_for_request_response(id);
 
             ControllerColors colors{};
@@ -538,7 +538,7 @@ void PABotBase2_OemController::update_status(Cancellable& cancellable){
         MessageHeader request;
         request.message_bytes = sizeof(request);
         request.opcode = PABB2_MESSAGE_OPCODE_REQUEST_STATUS;
-        uint8_t id = m_connection.device().send_request(request);
+        uint8_t id = m_connection.device().send_request_with_response(request);
         Message_u32 response;
         m_connection.device().wait_for_request_response<Message_u32, PABB2_MESSAGE_OPCODE_RET_U32>(
             response, id
@@ -552,7 +552,7 @@ void PABotBase2_OemController::update_status(Cancellable& cancellable){
         request.message_bytes = sizeof(request);
         request.opcode = PABB2_MESSAGE_OPCODE_PAIRED_MAC_ADDRESS;
         request.data = SerialPABotBase::controller_type_to_id(m_controller_type);
-        uint8_t id = m_connection.device().send_request(request);
+        uint8_t id = m_connection.device().send_request_with_response(request);
         std::string response = m_connection.device().wait_for_request_response(id);
         if (response.size() == sizeof(MessageHeader) + sizeof(mac_address)){
             memcpy(

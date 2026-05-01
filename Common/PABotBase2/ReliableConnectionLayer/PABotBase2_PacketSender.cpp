@@ -139,10 +139,12 @@ bool PacketSender::remove(uint8_t seqnum){
 //        cout << "PacketSender::remove(" << this << "): " << (int)seqnum << endl;
 //    }
 
-    //  Seqnum is out of range.
+    //  Too far in the future.
     if ((uint8_t)(seqnum - m_slot_head) >= SLOTS){
         return false;
     }
+
+    //  Too far in the past.
     if ((uint8_t)(m_slot_tail - seqnum) > SLOTS){
         return false;
     }

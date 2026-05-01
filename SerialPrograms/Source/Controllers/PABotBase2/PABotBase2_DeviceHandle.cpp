@@ -191,6 +191,13 @@ void DeviceHandle::query_command_queue(){
     m_logger.Logger::log("Setting queue size to: " + std::to_string(command_queue_size));
     m_command_queue.set_command_queue_size((uint8_t)command_queue_size);
 }
+void DeviceHandle::set_logging_flag(uint32_t flag){
+    PABotBase2::Message_u32 message;
+    message.message_bytes = sizeof(message);
+    message.opcode = PABB2_MESSAGE_OPCODE_SET_LOGGING_FLAG;
+    message.data = flag;
+    send_request_with_response(message);
+}
 void DeviceHandle::connect(){
     query_protocol();
 
@@ -202,6 +209,7 @@ void DeviceHandle::connect(){
 
     query_controller_list();
     query_command_queue();
+    set_logging_flag(GlobalSettings::instance().DEVICE_LOGGING_FLAG);
 }
 void DeviceHandle::try_set_controller_type(
     ControllerType controller_type,
@@ -214,7 +222,7 @@ void DeviceHandle::try_set_controller_type(
         : PABB2_MESSAGE_OPCODE_CHANGE_CONTROLLER_MODE;
     try{
         message.data = SerialPABotBase::controller_type_to_id(controller_type);
-        try_send_request(message, std::chrono::milliseconds(100));
+        try_send_request_with_response(message, std::chrono::milliseconds(100));
     }catch (...){}
 }
 
@@ -231,7 +239,13 @@ ControllerType DeviceHandle::refresh_controller_type(){
     return current_controller;
 }
 
-uint8_t DeviceHandle::send_request(MessageHeader& request){
+void DeviceHandle::send_request_with_no_response(MessageHeader& request){
+    request.id = 0;
+    std::unique_lock<Mutex> lg(m_lock);
+    m_message_loggers.log_send(m_logger, GlobalSettings::instance().LOG_EVERYTHING, &request);
+    m_connection.reliable_send_blocking(&request, request.message_bytes);
+}
+uint8_t DeviceHandle::send_request_with_response(MessageHeader& request){
     std::unique_lock<Mutex> lg(m_lock);
     while (true){
         throw_if_cancelled();
@@ -262,7 +276,9 @@ uint8_t DeviceHandle::send_request(MessageHeader& request){
 
     return request.id;
 }
-std::optional<uint8_t> DeviceHandle::try_send_request(MessageHeader& request, WallDuration timeout) noexcept{
+std::optional<uint8_t> DeviceHandle::try_send_request_with_response(
+    MessageHeader& request, WallDuration timeout
+) noexcept{
     std::unique_lock<Mutex> lg(m_lock);
     try{
         while (true){
@@ -332,7 +348,7 @@ uint32_t DeviceHandle::query_u32(uint8_t opcode){
     request.message_bytes = sizeof(MessageHeader);
     request.opcode = opcode;
 
-    send_request(request);
+    send_request_with_response(request);
 
     std::string response = wait_for_request_response(request.id);
     if (response.size() != sizeof(Message_u32)){
@@ -351,7 +367,7 @@ std::string DeviceHandle::query_data(uint8_t opcode){
     request.message_bytes = sizeof(MessageHeader);
     request.opcode = opcode;
 
-    send_request(request);
+    send_request_with_response(request);
 
     std::string response = wait_for_request_response(request.id);
     if (response.size() < sizeof(MessageHeader)){

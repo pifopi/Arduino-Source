@@ -80,8 +80,11 @@ public:
 public:
     ControllerType refresh_controller_type();
 
-    uint8_t send_request(MessageHeader& request);
-    std::optional<uint8_t> try_send_request(MessageHeader& request, WallDuration timeout) noexcept;
+    void send_request_with_no_response(MessageHeader& request);
+    uint8_t send_request_with_response(MessageHeader& request);
+    std::optional<uint8_t> try_send_request_with_response(
+        MessageHeader& request, WallDuration timeout
+    ) noexcept;
     std::string wait_for_request_response(
         uint8_t id,
         WallDuration timeout = WallDuration::max()
@@ -118,6 +121,7 @@ private:
     void query_protocol();
     void query_controller_list();
     void query_command_queue();
+    void set_logging_flag(uint32_t flag);
 
     virtual void on_recv(const void* data, size_t bytes) override;
 
