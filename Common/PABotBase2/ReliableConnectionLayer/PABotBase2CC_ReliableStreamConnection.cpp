@@ -173,11 +173,14 @@ size_t ReliableStreamConnection::unreliable_send(const void* data, size_t bytes)
 bool ReliableStreamConnection::reset(bool random_session_id, WallDuration timeout){
     {
         std::lock_guard<Mutex> lg(m_lock);
-        if (random_session_id){
-            m_reliable_sender.reset(m_reliable_sender.session_id() + 1);
-        }else{
+        if (!random_session_id){
             m_reliable_sender.reset(0xffffffff);
+        }else if (m_reliable_sender.session_id() == 0xffffffff){
+            m_reliable_sender.reset(random_u32());
+        }else{
+            m_reliable_sender.reset(m_reliable_sender.session_id() + 1);
         }
+        m_logger.log("Session ID: 0x" + tostr_hex(m_reliable_sender.session_id()));
         m_parser.reset();
         m_stream_coalescer.reset();
         throw_if_cancelled();

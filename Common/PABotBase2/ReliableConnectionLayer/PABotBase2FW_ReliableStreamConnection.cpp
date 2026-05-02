@@ -153,7 +153,6 @@ bool ReliableStreamConnectionFW::run_recv_events(const WallDuration& timeout){
 
     //  Now handle the different opcodes.
     uint8_t opcode = header->opcode & PABB2_CONNECTION_OPCODE_MASK;
-
     switch (opcode){
     case PABB2_CONNECTION_OPCODE_ASK_RESET:{
         if (header->packet_bytes < sizeof(PacketHeader_u32)){
