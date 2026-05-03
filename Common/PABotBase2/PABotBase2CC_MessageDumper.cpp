@@ -521,6 +521,7 @@ void MessageLogger::add_message(
     std::function<bool(const MessageHeader*)> should_log,
     std::function<std::string(const MessageHeader*)> to_str
 ){
+    std::lock_guard<Mutex> lg(m_lock);
     auto ret = m_converters.emplace(
         opcode,
         MessagePrinter{
@@ -545,6 +546,7 @@ void MessageLogger::add_message(
 
 
 std::string MessageLogger::to_str(const MessageHeader* message) const{
+    std::lock_guard<Mutex> lg(m_lock);
     uint8_t opcode = message->opcode;
     auto iter = m_converters.find(opcode);
     if (iter == m_converters.end()){
@@ -558,6 +560,7 @@ void MessageLogger::log_send(
     const MessageHeader* message,
     Color color
 ) const noexcept{
+    std::lock_guard<Mutex> lg(m_lock);
     try{
         auto iter = m_converters.find(message->opcode);
         if (iter == m_converters.end()){
@@ -581,6 +584,7 @@ void MessageLogger::log_recv(
     const MessageHeader* message,
     Color color
 ) const noexcept{
+    std::lock_guard<Mutex> lg(m_lock);
     try{
         auto iter = m_converters.find(message->opcode);
         if (iter == m_converters.end()){
