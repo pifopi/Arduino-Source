@@ -81,7 +81,7 @@ public:
     //
     //  "tail" furthest into the future and marks where the next write should be.
     //
-    //  "head" is the oldest hole in the coalescer. It may be temporarily be not
+    //  "head" is the oldest hole in the coalescer. It may temporarily not be
     //  a hole, it just means it hasn't been advanced forward yet.
     //
     //  "free" is the oldest offset in the coalescer. Reads start here. It is
