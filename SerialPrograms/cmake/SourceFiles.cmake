@@ -717,6 +717,10 @@ file(GLOB LIBRARY_SOURCES
     Source/ComputerPrograms/Framework/ComputerProgramWidget.h
     Source/ControllerInput/ControllerInput.cpp
     Source/ControllerInput/ControllerInput.h
+    Source/ControllerInput/Gamepad/GamepadInput_State.cpp
+    Source/ControllerInput/Gamepad/GamepadInput_State.h
+    Source/ControllerInput/Gamepad/GlobalGamepadTracker.cpp
+    Source/ControllerInput/Gamepad/GlobalGamepadTracker.h
     Source/ControllerInput/Keyboard/GlobalKeyboardHidTracker.cpp
     Source/ControllerInput/Keyboard/GlobalKeyboardHidTracker.h
     Source/ControllerInput/Keyboard/GlobalQtKeyMap.cpp

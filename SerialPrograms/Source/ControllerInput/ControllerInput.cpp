@@ -8,6 +8,7 @@
 #include "ControllerInput.h"
 
 #include "Keyboard/GlobalKeyboardHidTracker.h"
+#include "Gamepad/GlobalGamepadTracker.h"
 
 namespace PokemonAutomation{
 
@@ -22,6 +23,7 @@ public:
 
         m_input_sources.emplace_back(&global_keyboard_tracker());
 
+        m_input_sources.emplace_back(&global_gamepad_tracker());
     }
 
     void stop(){
