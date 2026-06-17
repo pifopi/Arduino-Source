@@ -1,0 +1,7 @@
++    -> +
+-    -> -
+A    -> ENTER
+B    -> SHIFT
+X    -> ù/%
+Y    -> !/§
+HOME -> H
