@@ -17,11 +17,11 @@ namespace PokemonAutomation{
 
 class KeyboardInputState final : public ControllerInputState{
 public:
-    KeyboardInputState(KeyboardInputState&& x)
+    KeyboardInputState(KeyboardInputState&& x) noexcept
         : ControllerInputState(ControllerInputType::HID_Keyboard)
         , m_keys(std::move(x.m_keys))
     {}
-    void operator=(KeyboardInputState&& x){
+    void operator=(KeyboardInputState&& x) noexcept{
         if (this == &x){
             return;
         }
