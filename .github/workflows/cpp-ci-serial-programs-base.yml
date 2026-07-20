@@ -152,9 +152,8 @@ jobs:
         )
         EOF
 
-        for file in `jq -r '.[].file' SerialPrograms/bin/compile_commands.json`; do
-          clang-query -p SerialPrograms/bin/ -f query.txt "$file" >> clang-query_output.txt
-        done
+        files=$(jq -r '.[].file' SerialPrograms/bin/compile_commands.json)
+        clang-query -p SerialPrograms/bin/ -f query.txt $files >> clang-query_output.txt
 
         echo "Clang query output (begin)"
         cat clang-query_output.txt
