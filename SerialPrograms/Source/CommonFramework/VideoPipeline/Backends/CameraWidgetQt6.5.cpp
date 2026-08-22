@@ -38,7 +38,18 @@ std::string CameraBackend::get_camera_name(const CameraInfo& info) const{
     const auto cameras = GlobalMediaServices::instance().get_all_cameras();
     for (const auto& camera : cameras){
         if (camera.id().toStdString() == info.device_name()){
-            return camera.description().toStdString();
+            QByteArray camera1 = QByteArray("\\\\?\\usb#vid_298f&pid_1996&mi_00#7&20db319&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global");
+            QByteArray camera2 = QByteArray("\\\\?\\usb#vid_298f&pid_1996&mi_00#7&2bc279a3&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global");
+            QByteArray camera3 = QByteArray("\\\\?\\usb#vid_298f&pid_1996&mi_00#7&2e16041&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global");
+            if (camera.id() == camera1){
+                return "ShadowCast Video 1";
+            }else if (camera.id() == camera2){
+                return "ShadowCast Video 2";
+            }else if (camera.id() == camera3){
+                return "ShadowCast Video 3";
+            }else{
+                return camera.description().toStdString();
+            }
         }
     }
     global_logger_tagged().log(

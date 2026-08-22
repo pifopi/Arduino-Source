@@ -156,7 +156,7 @@ public:
 
 class DonutBerriesTableRow : public EditableTableRow{
 public:
-    DonutBerriesTableRow(EditableTableOption& parent_table);
+    DonutBerriesTableRow(EditableTableOption& parent_table, const std::string& default_berry = "hyper-cheri-berry");
     virtual std::unique_ptr<EditableTableRow> clone() const override;
 
 public:
@@ -174,11 +174,20 @@ public:
 };
 
 
-
+struct Power
+{
+    Flavor_Powers flavor_power;
+    Power_Level power_level;
+};
 //Donut Flavor Power selection
 class FlavorPowerTableRow : public EditableTableRow, public ConfigOption::Listener{
 public:
-    FlavorPowerTableRow(EditableTableOption& parent_table);
+    FlavorPowerTableRow(
+       EditableTableOption& parent_table,
+        const Power& power1 = Power{ Flavor_Powers::alpha, Power_Level::three },
+        const Power& power2 = Power{ Flavor_Powers::any, Power_Level::any },
+        const Power& power3 = Power{ Flavor_Powers::any, Power_Level::any }
+    );
     virtual std::unique_ptr<EditableTableRow> clone() const override;
 
     FlavorPowerTableEntry snapshot() const;
