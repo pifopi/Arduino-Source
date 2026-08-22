@@ -153,6 +153,8 @@ jobs:
         run : |
           cd Arduino-Source
 
+          clang-query --version
+
           cat << 'EOF' > query.txt
           match cxxConstructExpr(
             isExpansionInFileMatching("SerialPrograms/"),
