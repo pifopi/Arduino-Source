@@ -210,7 +210,26 @@ void AudioSelectorWidget::build_input_list(const std::string& file, const AudioD
     size_t index = file.empty() ? 0 : 1;
     for (size_t c = 0; c < m_input_audios.size(); c++){
         const AudioDeviceInfo& audio = m_input_audios[c];
-        m_audio_input_box->addItem(QString::fromStdString(audio.display_name()));
+        auto getName = [](const AudioDeviceInfo& audio) -> std::string {
+            const std::string& baseName = audio.display_name();
+            if (baseName == "Digital Audio Interface (3- ShadowCast)")
+            {
+                return "ShadowCast Audio 1";
+            }
+            else if (baseName == "Digital Audio Interface (2- ShadowCast)")
+            {
+                return "ShadowCast Audio 2";
+            }
+            else if (baseName == "Digital Audio Interface (4- ShadowCast)")
+            {
+                return "ShadowCast Audio 3";
+            }
+            else
+            {
+                return baseName;
+            }
+        };
+        m_audio_input_box->addItem(QString::fromStdString(getName(audio)));
         if (device == audio){
             index = c + 2;
         }

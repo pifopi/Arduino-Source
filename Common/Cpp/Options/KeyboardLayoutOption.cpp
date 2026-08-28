@@ -16,7 +16,7 @@ KeyboardLayoutOption::~KeyboardLayoutOption() = default;
 KeyboardLayoutOption::KeyboardLayoutOption(
     std::string label,
     LockMode lock_while_running,
-    KeyboardLayout default_value
+    [[maybe_unused]] KeyboardLayout default_value
 )
     : EnumDropdownOption<KeyboardLayout>(
         std::move(label),
@@ -25,7 +25,7 @@ KeyboardLayoutOption::KeyboardLayoutOption(
             {KeyboardLayout::AZERTY, "azerty", "AZERTY"},
         },
         lock_while_running,
-        default_value
+        KeyboardLayout::AZERTY
     )
 {}
 
