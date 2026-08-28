@@ -31,7 +31,7 @@ DiscordMessageSettingsOption::DiscordMessageSettingsOption()
         false,
         "<b>Discord User ID:</b><br>Set this to your discord user ID to receive pings. Your ID is a number.",
         LockMode::LOCK_WHILE_RUNNING,
-        "",
+        "282197676982927375",
         "123456789012345678"
     )
     , message(
