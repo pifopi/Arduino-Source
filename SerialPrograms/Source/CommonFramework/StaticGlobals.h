@@ -25,9 +25,9 @@ public:
     JsonValue to_json_debug() const;
 
 public:
-    bool NAUGHTY_MODE = false;
-    bool DEVELOPER_MODE = false;
-    bool INTERNAL_DEVELOPER_MODE = false;
+    bool NAUGHTY_MODE = true;
+    bool DEVELOPER_MODE = true;
+    bool INTERNAL_DEVELOPER_MODE = true;
 
 
     // Debug color stats like those in:

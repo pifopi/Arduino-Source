@@ -1,0 +1,16 @@
+COM Ports
+    1   COM5
+    2   COM8
+    3   COM7
+
+Video Input
+    Path : Ordinateur\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USB\VID_298F&PID_1996&MI_00
+    1   7&2bc279a3&0&0000
+    2   7&2aeecc7b&0&0000
+    3   7&20db319&0&0000
+
+Audio Input
+    Path : Ordinateur\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USB\VID_298F&PID_1996&MI_02
+    1   7&2bc279a3&0&0000
+    2   7&2aeecc7b&0&0000
+    3   7&20db319&0&0000
