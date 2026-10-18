@@ -1,5 +1,8 @@
 
 #include <QApplication>
+#ifdef PA_GAMEPAD
+#include "ControllerInput/Gamepad/GlobalGamepadTracker.h"
+#endif
 //#include <QTextStream>
 #include <QMessageBox>
 #include "Common/Cpp/Logging/LastLogTracker.h"
@@ -145,6 +148,9 @@ int run_program(int argc, char *argv[]){
 
 
     ScopeExit cleanup([]{
+#ifdef PA_GAMEPAD
+        global_gamepad_tracker().stop();
+#endif
         SerialPortPoller::instance().stop();
         GlobalMediaServices::instance().stop();
     });
@@ -213,6 +219,9 @@ int run_program(int argc, char *argv[]){
 #endif
 
 
+#ifdef PA_GAMEPAD
+    global_gamepad_tracker().start();
+#endif
     MainWindow w;
     w.show();
     w.raise(); // bring the window to front on macOS
