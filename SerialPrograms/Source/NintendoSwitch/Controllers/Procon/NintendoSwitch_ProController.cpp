@@ -12,6 +12,7 @@
 #include "NintendoSwitch/NintendoSwitch_Settings.h"
 #include "NintendoSwitch/Controllers/NintendoSwitch_ControllerButtons.h"
 #include "NintendoSwitch/Controllers/NintendoSwitch_VirtualControllerState.h"
+#include "NintendoSwitch/Controllers/NintendoSwitch_Gamepad.h"
 #include "NintendoSwitch_ProControllerState.h"
 #include "NintendoSwitch_ProController.h"
 
@@ -129,26 +130,30 @@ bool ProController::run_string_command(Milliseconds duration, const std::string&
 void ProController::run_controller_input(const ControllerInputState& state){
 //    cout << "run_controller_input()" << endl;
 
-    if (state.type() != ControllerInputType::HID_Keyboard){
+    if (state.type() != ControllerInputType::HID_Keyboard && state.type() != ControllerInputType::StandardGamepad){
         return;
     }
 
     ProControllerDeltas deltas;
 
-    const KeyboardInputState& lstate = static_cast<const KeyboardInputState&>(state);
-    const std::map<KeyboardKey, ProControllerDeltas>& map = m_data->m_keyboard_mapping;
-
-//    cout << "keys() = " << lstate.keys().size() << endl;
-
-    for (KeyboardKey key : lstate.keys()){
-        auto iter = map.find(key);
-        if (iter != map.end()){
-            deltas += iter->second;
-        }
-    }
-
     ProControllerState controller_state;
-    deltas.to_state(controller_state);
+    if (state.type() == ControllerInputType::StandardGamepad){
+        gamepad_to_pro_controller(static_cast<const GamepadInputState&>(state), controller_state);
+    }else{
+        const KeyboardInputState& lstate = static_cast<const KeyboardInputState&>(state);
+        const std::map<KeyboardKey, ProControllerDeltas>& map = m_data->m_keyboard_mapping;
+
+    //    cout << "keys() = " << lstate.keys().size() << endl;
+
+        for (KeyboardKey key : lstate.keys()){
+            auto iter = map.find(key);
+            if (iter != map.end()){
+                deltas += iter->second;
+            }
+        }
+
+        deltas.to_state(controller_state);
+    }
 
     WallClock timestamp;
     if (controller_state.is_neutral()){
