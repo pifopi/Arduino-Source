@@ -40,7 +40,29 @@ std::string CameraBackend::get_camera_name(const CameraInfo& info) const{
     const auto cameras = GlobalMediaServices::instance().get_all_cameras();
     for (const auto& camera : cameras){
         if (camera.id().toStdString() == info.device_name()){
-            return camera.description().toStdString();
+            const std::string& baseName = camera.id().toStdString();
+            if (baseName == info.device_name())
+            {
+                std::string camera1 = "\\\\?\\usb#vid_298f&pid_1996&mi_00#6&1df70757&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global";
+                std::string camera2 = "\\\\?\\usb#vid_298f&pid_1996&mi_00#6&341e7014&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global";
+                std::string camera3 = "\\\\?\\usb#vid_298f&pid_1996&mi_00#6&b3d56b2&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\\global";
+                if (baseName == camera1)
+                {
+                    return std::format("ShadowCast Video 1 - ({})", camera1);
+                }
+                else if (baseName == camera2)
+                {
+                    return std::format("ShadowCast Video 2 - ({})", camera2);
+                }
+                else if (baseName == camera3)
+                {
+                    return std::format("ShadowCast Video 3 - ({})", camera3);
+                }
+                else
+                {
+                    return std::format("{} - ({})", baseName, camera.description().toStdString());
+                }
+            }
         }
     }
     std::cout << "Error: no such camera for CameraInfo: " << info.device_name() << std::endl;

@@ -78,7 +78,7 @@ jobs:
       - name: Checkout Packages
         uses: actions/checkout@v7
         with:
-          repository: 'PokemonAutomation/Packages'
+          repository: 'pifopi/Packages'
           ref: 'master'
           path: 'Arduino-Source/Packages'
 
@@ -213,6 +213,11 @@ jobs:
             echo "https://github.com/${{github.repository_owner}}/Arduino-Source/commit/$(git -C Arduino-Source rev-parse HEAD)"
             echo "https://github.com/${{github.repository_owner}}/Packages/commit/$(git -C Arduino-Source/Packages rev-parse HEAD)"
           } > ${{env.UPLOAD_FOLDER}}/version.txt
+          cp Arduino-Source/controls.txt  ${{env.UPLOAD_FOLDER}}
+          cp Arduino-Source/devices.txt   ${{env.UPLOAD_FOLDER}}
+          cp Arduino-Source/SWITCH1.JSON  ${{env.UPLOAD_FOLDER}}
+          cp Arduino-Source/SWITCH2.JSON  ${{env.UPLOAD_FOLDER}}
+          cp Arduino-Source/SWITCH3.JSON  ${{env.UPLOAD_FOLDER}}
 
       # Leave out the static libraries, which only the build itself uses. With debug info,
       # SerialProgramsLib.lib alone was over 1 GB uncompressed.
@@ -236,7 +241,7 @@ jobs:
         uses: actions/checkout@v7
         if: inputs.run-tests
         with:
-          repository: 'PokemonAutomation/CommandLineTests'
+          repository: 'pifopi/CommandLineTests'
           path: 'CommandLineTests'
 
       # The unit tests assume the downloadable resources they need are already downloaded
@@ -263,6 +268,7 @@ jobs:
         if: startsWith(inputs.os, 'windows') && inputs.run-tests
         run: |
           cd Arduino-Source/SerialPrograms/bin
+          $env:DISCORD_BOT_TOKEN_TyranitarBot = "Value"
           $process = Start-Process -FilePath "./RelWithDebInfo/SerialPrograms.exe" `
                                    -ArgumentList "--command-line-test-mode" `
                                    -NoNewWindow -Wait -PassThru
@@ -276,6 +282,7 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
           TESSDATA_PREFIX: ${{ github.workspace }}/Arduino-Source/SerialPrograms/bin/Resources/Tesseract
+          DISCORD_BOT_TOKEN_TyranitarBot: "Value"
         run: |
           cd Arduino-Source/SerialPrograms/bin
           ./SerialPrograms --command-line-test-mode
@@ -284,6 +291,7 @@ jobs:
         if: startsWith(inputs.os, 'mac') && inputs.run-tests
         run: |
           cd Arduino-Source/SerialPrograms/bin
+          export DISCORD_BOT_TOKEN_TyranitarBot="Value"
           ./SerialPrograms.app/Contents/MacOS/SerialPrograms --command-line-test-mode
 
       # The list of files that passed clang-query, from the latest run on this branch or on main.
