@@ -28,4 +28,3 @@ This doesn't actually work. (flickering video display) But here are the instruct
 ## Developer guide
 
 https://github.com/PokemonAutomation/ComputerControl/blob/master/Wiki/Developer/README.md
-

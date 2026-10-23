@@ -224,6 +224,8 @@ target_link_libraries(
     $<LINK_LIBRARY:WHOLE_ARCHIVE,SerialProgramsLib>
 )
 
+include(cmake/Gamepad.cmake)
+
 # Add source code exclusive to the internal repo and add C++ macro of official release
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../Internal/SerialPrograms/Internal0.cpp")
     message(STATUS "Building internal SerialPrograms")

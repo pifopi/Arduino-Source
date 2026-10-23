@@ -61,6 +61,10 @@ Packages/
 SerialPrograms/CMakeLists.txt.user
 opencv_world4120.dll
 opencv_world4120d.dll
+sfml-system-3.dll
+sfml-system-d-3.dll
+sfml-window-3.dll
+sfml-window-d-3.dll
 
 # Python cache
 __pycache__
