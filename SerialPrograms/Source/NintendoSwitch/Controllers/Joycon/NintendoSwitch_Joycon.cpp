@@ -12,6 +12,7 @@
 #include "Controllers/RumbleListener.h"
 #include "NintendoSwitch/NintendoSwitch_Settings.h"
 #include "NintendoSwitch/Controllers/NintendoSwitch_VirtualControllerState.h"
+#include "NintendoSwitch/Controllers/NintendoSwitch_Gamepad.h"
 #include "NintendoSwitch_JoyconState.h"
 #include "NintendoSwitch_Joycon.h"
 
@@ -34,6 +35,7 @@ const char RightJoycon::NAME[] = "Nintendo Switch: Right Joycon";
 struct JoyconController::Data{
     ListenerSet<RumbleListener> m_rumble_listeners;
     std::map<KeyboardKey, JoyconDeltas> m_keyboard_mapping;
+    bool m_left = false;
 };
 
 
@@ -51,6 +53,7 @@ void JoyconController::remove_listener(RumbleListener& listener){
 JoyconController::JoyconController(Logger& logger, ControllerClass controller_class)
     : m_data(CONSTRUCT_TOKEN)
 {
+    m_data->m_left = controller_class == ControllerClass::NintendoSwitch_LeftJoycon;
     std::vector<std::shared_ptr<EditableTableRow>> mapping =
         controller_class == ControllerClass::NintendoSwitch_LeftJoycon
             ? ConsoleSettings::instance().KEYBOARD_MAPPINGS.LEFT_JOYCON2.current_refs()
@@ -116,26 +119,43 @@ bool JoyconController::run_string_command(Milliseconds duration, const std::stri
 
 void JoyconController::run_controller_input(const ControllerInputState& state){
 
-    if (state.type() != ControllerInputType::HID_Keyboard){
+    if (state.type() != ControllerInputType::HID_Keyboard && state.type() != ControllerInputType::StandardGamepad){
         return;
     }
 
     JoyconDeltas deltas;
 
-    const KeyboardInputState& lstate = static_cast<const KeyboardInputState&>(state);
-    const std::map<KeyboardKey, JoyconDeltas>& map = m_data->m_keyboard_mapping;
-
-//    cout << "keys() = " << lstate.keys().size() << endl;
-
-    for (KeyboardKey key : lstate.keys()){
-        auto iter = map.find(key);
-        if (iter != map.end()){
-            deltas += iter->second;
-        }
-    }
-
     JoyconState controller_state;
-    deltas.to_state(controller_state);
+    if (state.type() == ControllerInputType::StandardGamepad){
+        const auto& input = static_cast<const GamepadInputState&>(state);
+        ProControllerState pro;
+        gamepad_to_pro_controller(input, pro);
+        controller_state.buttons = pro.buttons;
+        if (m_data->m_left){
+            // The left Joy-Con's directional buttons occupy its face cluster.
+            if (input.pressed(GamepadButton::Up)) controller_state.buttons |= BUTTON_UP;
+            if (input.pressed(GamepadButton::Down)) controller_state.buttons |= BUTTON_DOWN;
+            if (input.pressed(GamepadButton::Left)) controller_state.buttons |= BUTTON_LEFT;
+            if (input.pressed(GamepadButton::Right)) controller_state.buttons |= BUTTON_RIGHT;
+            controller_state.joystick = pro.left_joystick;
+        }else{
+            controller_state.joystick = pro.right_joystick;
+        }
+    }else{
+        const KeyboardInputState& lstate = static_cast<const KeyboardInputState&>(state);
+        const std::map<KeyboardKey, JoyconDeltas>& map = m_data->m_keyboard_mapping;
+
+    //    cout << "keys() = " << lstate.keys().size() << endl;
+
+        for (KeyboardKey key : lstate.keys()){
+            auto iter = map.find(key);
+            if (iter != map.end()){
+                deltas += iter->second;
+            }
+        }
+
+        deltas.to_state(controller_state);
+    }
 
     WallClock timestamp;
     if (controller_state.is_neutral()){

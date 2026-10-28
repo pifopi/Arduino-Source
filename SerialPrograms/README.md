@@ -25,7 +25,11 @@ This doesn't actually work. (flickering video display) But here are the instruct
 
 - [Compilling for Mac](BuildInstructions/CompilingForMac.md)
 
+## Gamepad support
+
+Physical gamepads can control the focused Nintendo Switch console. See
+[gamepad input and build instructions](BuildInstructions/Gamepad.md).
+
 ## Developer guide
 
 https://github.com/PokemonAutomation/ComputerControl/blob/master/Wiki/Developer/README.md
-
