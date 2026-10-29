@@ -6,7 +6,13 @@
 
 #include <vector>
 #include "Keyboard/GlobalKeyboardHidTracker.h"
+<<<<<<< HEAD
 #include "ControllerInput.h"
+=======
+#ifdef PA_GAMEPAD
+#include "Gamepad/GlobalGamepadTracker.h"
+#endif
+>>>>>>> db3f3f40a (Add SFML gamepad input with configurable controller mappings)
 
 namespace PokemonAutomation{
 
@@ -20,6 +26,9 @@ public:
         //
 
         m_input_sources.emplace_back(&global_keyboard_tracker());
+#ifdef PA_GAMEPAD
+        m_input_sources.emplace_back(&global_gamepad_tracker());
+#endif
 
     }
 
