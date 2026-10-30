@@ -51,6 +51,10 @@ LanguageOCRCell::LanguageOCRCell(
             std::forward_as_tuple(language),
             std::forward_as_tuple(index)
         );
+        if (language == Language::French){
+            m_default = index;
+            m_current = index;
+        }
         index++;
     }
 }
