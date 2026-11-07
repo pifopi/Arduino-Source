@@ -35,7 +35,7 @@ public:
         : EnumDropdownCell<ConsoleType>(
             CONSOLE_MODEL_DATABASE(),
             LockMode::LOCK_WHILE_RUNNING,
-            ConsoleType::Unknown
+            ConsoleType::Switch1
         )
     {}
 
@@ -50,7 +50,7 @@ public:
             std::move(label),
             CONSOLE_MODEL_DATABASE(),
             LockMode::LOCK_WHILE_RUNNING,
-            ConsoleType::Unknown
+            ConsoleType::Switch1
         )
     {}
 
