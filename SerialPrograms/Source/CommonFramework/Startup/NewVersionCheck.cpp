@@ -48,24 +48,6 @@ struct ProgramVersion{
     }
 
     bool is_newer() const{
-        if (major > PROGRAM_VERSION_MAJOR){
-            return true;
-        }
-        if (major < PROGRAM_VERSION_MAJOR){
-            return false;
-        }
-
-        if (minor > PROGRAM_VERSION_MINOR){
-            return true;
-        }
-        if (minor < PROGRAM_VERSION_MINOR){
-            return false;
-        }
-
-        if (patch > PROGRAM_VERSION_PATCH){
-            return true;
-        }
-
         return false;
     }
 
