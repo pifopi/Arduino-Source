@@ -47,24 +47,6 @@ void StaticGlobals::load_json(const JsonValue& json){
         return;
     }
 
-    //  Naughty mode.
-    obj->read_boolean(NAUGHTY_MODE, "NAUGHTY_MODE");
-
-    //  Developer mode stuff.
-    const std::string* dev_token = obj->get_string("DEVELOPER_TOKEN");
-    if (dev_token){
-        SHA256 hash;
-        hash.push(dev_token->c_str(), dev_token->size());
-        hash.finish();
-        hash.get_hash_hex();
-
-        std::string str = hash.get_hash_hex();
-        DEVELOPER_MODE = TOKENS.find(str) != TOKENS.end();
-#ifdef PA_OFFICIAL
-        process_internal_dev(str);
-#endif
-    }
-
     const JsonObject* debug_obj = obj->get_object("DEBUG");
     if (debug_obj){
         debug_obj->read_boolean(COLOR_CHECK, "COLOR_CHECK");

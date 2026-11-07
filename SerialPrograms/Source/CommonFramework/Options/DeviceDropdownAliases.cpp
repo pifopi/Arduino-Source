@@ -62,6 +62,25 @@ std::vector<std::string> DeviceDropdownAliases::make_header() const{
 }
 
 std::optional<std::string> DeviceDropdownAliases::lookup(DeviceAliasType category, const std::string& device_id) const{
+    if (device_id == R"(\\?\usb#vid_298f&pid_1996&mi_00#6&1df70757&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global)"){
+        return "ShadowCast Video 1";
+    }
+    else if (device_id == R"(\\?\usb#vid_298f&pid_1996&mi_00#6&341e7014&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global)"){
+        return "ShadowCast Video 2";
+    }
+    else if (device_id == R"(\\?\usb#vid_298f&pid_1996&mi_00#6&b3d56b2&0&0000#{e5323777-f976-4f5b-9b55-b94699c46e44}\global)"){
+        return "ShadowCast Video 3";
+    }
+    else if (device_id == R"({0.0.1.00000000}.{c55cb6a7-0e77-4af3-83a0-d9ab1aeeea72})"){
+        return "ShadowCast Audio 1";
+    }
+    else if (device_id == R"({0.0.1.00000000}.{ca75b45c-674f-4c5a-90ed-db3d82a5a4c5})"){
+        return "ShadowCast Audio 2";
+    }
+    else if (device_id == R"({0.0.1.00000000}.{f087b64e-d99f-47fe-b3b0-483b35d7fb70})"){
+        return "ShadowCast Audio 3";
+    }
+
     std::optional<std::string> result;
     EditableTableOption::run_on_all_rows<DeviceAliasRow>([&](const DeviceAliasRow& row){
         if (row.category != category || std::string(row.device_id) != device_id){

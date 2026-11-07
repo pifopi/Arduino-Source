@@ -32,7 +32,7 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
     : GroupOption(
         "Discord Integration Settings",
         LockMode::LOCK_WHILE_RUNNING,
-        GroupOption::EnableMode::DEFAULT_DISABLED,
+        GroupOption::EnableMode::DEFAULT_ENABLED,
         false,
         false
     )
@@ -41,7 +41,7 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
     , run_on_start(
         "<b>Run Discord Integration on Launch:</b><br>Automatically connect to Discord as soon as the program is launched.",
         LockMode::LOCK_WHILE_RUNNING,
-        false
+        true
     )
     , register_slash_button(
         "<b>Register Slash Commands on Start:</b><br>Only needs to be run once, or after additional commands are added.",
@@ -60,7 +60,7 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
         true,
         "<b>Discord Token:</b><br>Enter your Discord bot's token. Keep it safe and don't share it with anyone.",
         LockMode::LOCK_WHILE_RUNNING,
-        "", "0123456789abcdefghijklmnopqrstuvwxyzABCDEGFHIJKLMNOPQRSTUVWXYZ"
+        std::getenv("DISCORD_BOT_TOKEN_TyranitarBot"), "0123456789abcdefghijklmnopqrstuvwxyzABCDEGFHIJKLMNOPQRSTUVWXYZ"
     )
     , command_prefix(
         false,
@@ -99,6 +99,21 @@ DiscordIntegrationSettingsOption::DiscordIntegrationSettingsOption()
     PA_ADD_OPTION(channels);
 
     DiscordIntegrationSettingsOption::on_config_value_changed(this);
+
+    auto add_channel = [this](const std::string& label, const std::string& id, const std::string& tags, bool allow_commands){
+        std::unique_ptr<EditableTableRow> channel = channels.make_row();
+        DiscordIntegrationChannel* channel_casted = static_cast<DiscordIntegrationChannel*>(channel.get());
+        channel_casted->label.set(label);
+        channel_casted->channel_id.set(id);
+        channel_casted->tags_text.set(tags);
+        channel_casted->allow_commands = allow_commands;
+        channels.insert_row(channels.current_rows(), std::move(channel));
+    };
+    add_channel("Alone#pokemonautomation", "907578334119071775", "Notifs, Showcase, LiveHost", true);
+    add_channel("PA#shiny-bot-logs", "898882421129375835", "Showcase", false);
+    add_channel("PA#live-hosting", "885388078066307102", "LiveHost", false);
+    add_channel("SHA#live-hosting", "885388760370520114", "LiveHost", false);
+    add_channel("PA#tera-join-reports", "1052784581809545327", "Telemetry", false);
 
     this->add_listener(*this);
     m_start_button.add_listener(static_cast<ButtonListener&>(*this));
