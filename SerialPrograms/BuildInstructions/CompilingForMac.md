@@ -165,8 +165,6 @@ Install SDL 3.2 or newer before configuring the program:
 brew install sdl3
 ```
 
-SDL support is disabled by default. Enable it with `-DPA_SDL=ON` when configuring CMake.
-
 ### Install DPP (optional)
 DPP is a library for Discord integration. If you need discord webhooks for notification you need to install it.
 You can do this step after [Part 3: Download Codebase](#part-3-download-codebase).
@@ -287,6 +285,8 @@ Execute the command in Terminal:
 ```
 cmake ../SerialPrograms/ -G Ninja -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_PREFIX_PATH=$HOME/Qt/6.10.2/macos -DPA_USE_CCACHE=ON
 ```
+For gamepad support, append `-DPA_GAMEPAD=ON` to the command above. Keep the Qt path and other options. Use `-DPA_GAMEPAD=OFF` to disable it again.
+
 This command uses CMake to configure our code to prepare for compilation. `-G Ninja` tells CMake to compile with Ninja, `-DCMAKE_PREFIX_PATH` tells CMake where the Qt you installed is, and `-DPA_USE_CCACHE=ON` tells CMake to compile with ccache. If successful, it should print texts like
 ```
 ...

@@ -50,9 +50,9 @@ If you are unable or unwilling to use the online installer, the alternative is t
 
 \*This Qt6 standalone file is 3GB in size and is being hosted by our staff for our own developers. We don't want the entire world converging here and overrunning the server.
 
-## Optional SDL support
+## Optional gamepad support
 
-SDL support is disabled by default. Enable it with `-DPA_SDL=ON` when configuring CMake.
+Gamepad support is disabled by default. Add `-DPA_GAMEPAD=ON` to your CMake configure command, or set `PA_GAMEPAD` to `ON` in Qt Creator's CMake build settings, then reconfigure and rebuild.
 
 ## Setup:
 

@@ -101,8 +101,8 @@ option(PA_CORE_ONLY "Build only the GUI-free core (basic microcontroller functio
 # listing, so every file would be recompiled on every run.
 option(PA_ASSEMBLY_LISTINGS "Write an assembly listing of every source file to Assembly/ (MSVC and clang-cl only)" ON)
 
-# Enable SDL by giving -DPA_SDL=ON on the CMake command line
-option(PA_SDL "Enable SDL library" OFF)
+# Enable gamepad integration by giving -DPA_GAMEPAD=ON on the CMake command line
+option(PA_GAMEPAD "Enable physical gamepad input" OFF)
 
 if(PA_CORE_ONLY)
     message(STATUS "PA_CORE_ONLY: building only the GUI-free core")
@@ -257,6 +257,12 @@ target_link_libraries(
     $<LINK_LIBRARY:WHOLE_ARCHIVE,SerialProgramsLib>
 )
 
+if (PA_GAMEPAD)
+    message(STATUS "Compiling with gamepad (via SDL) integration enabled")
+    target_compile_definitions(SerialProgramsLib PRIVATE PA_GAMEPAD)
+    target_compile_definitions(SerialPrograms PRIVATE PA_GAMEPAD)
+endif()
+
 # Add source code exclusive to the internal repo and add C++ macro of official release
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../Internal/SerialPrograms/Internal0.cpp")
     message(STATUS "Building internal SerialPrograms")
@@ -363,7 +369,7 @@ if(NOT EXISTS "${DEST_DIR}/Scripts")
 endif()
 
 if (WIN32)
-    if (PA_SDL)
+    if (PA_GAMEPAD)
         add_library(SDL3_lib IMPORTED UNKNOWN)
         set_target_properties(SDL3_lib PROPERTIES
             IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../3rdPartyBinaries/SDL3.lib
@@ -467,7 +473,7 @@ if (WIN32)
 #    target_compile_options(SerialProgramsLib PRIVATE /arch:AVX512 /DPA_Arch_x64_AVX512GF)
 else() # macOS and Linux
     find_package(PkgConfig REQUIRED)  # required to execute `pkg_search_module()` below
-    if (PA_SDL)
+    if (PA_GAMEPAD)
         # Resolve Homebrew's config symlinks so SDL uses its own include directory,
         # not the shared include root that also exposes incompatible Qt headers.
         set(PA_SAVED_FIND_PACKAGE_RESOLVE_SYMLINKS "${CMAKE_FIND_PACKAGE_RESOLVE_SYMLINKS}")
@@ -891,7 +897,7 @@ if (WIN32)
 
     # Copy 3rd party DLLs if missing/different
     file(GLOB THIRD_PARTY_DLLS "${REPO_ROOT_DIR}/3rdPartyBinaries/*.dll")
-    if (NOT PA_SDL)
+    if (NOT PA_GAMEPAD)
         list(REMOVE_ITEM THIRD_PARTY_DLLS "${REPO_ROOT_DIR}/3rdPartyBinaries/SDL3.dll")
     endif()
     foreach(DLL IN LISTS THIRD_PARTY_DLLS)
